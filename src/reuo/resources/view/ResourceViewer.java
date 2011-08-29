@@ -12,7 +12,7 @@ import org.json.JSONException;
 import reuo.resources.io.*;
 import reuo.util.Configuration;
 
-public class ResourceViewer extends JFrame implements ChangeListener{
+public class ResourceViewer extends JFrame implements ChangeListener {
 	public final static String APPNAME = "vUO";
 	public final static String CONFFILE = "vUO.json";
 	File dir;
@@ -30,49 +30,44 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 	JFileChooser dirChooser = new JFileChooser();
 	StatusBar statusBar;
 	SpeechViewer speechViewer;
-	
-	public ResourceViewer() throws IOException{
+
+	public ResourceViewer() throws IOException {
 		super(APPNAME);
 		dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		dirChooser.setDialogTitle("Select Your UO directory.");
-		configuration =  new Configuration();
-		
+		configuration = new Configuration();
+
 		doConfigure();
-		
+
 		setupMenu();
-		
+
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(new Dimension(600, 600));
 		setVisible(true);
-		
+
 		viewerTabs = new JTabbedPane();
 		setJMenuBar(mainMenu);
-		
+
 		// FlowLayout layout = new FlowLayout(FlowLayout.LEFT, 0, 0);
 		//GridLayout layout = new GridLayout(1, 0);
 		statusBar = new StatusBar();
 		statusBar.setBorder(BorderFactory.createLoweredBevelBorder());
-		
+
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(viewerTabs, BorderLayout.CENTER);
 		getContentPane().add(statusBar, BorderLayout.SOUTH);
-		
-		try{
+
+		try {
 			setupViewers();
 		} catch (FileNotFoundException e2) {
-			JOptionPane.showMessageDialog(
-				this,
-				"The .mul files were not found, either manually specify the\n"+
-				"location in "+CONFFILE+" (By setting the baseDir option) or\n"+
-				"delete "+CONFFILE+" and use the file picker to fix the problem.", 
-				"Muls not found", 
-				JOptionPane.ERROR_MESSAGE
-			);
+			JOptionPane.showMessageDialog(this, "The .mul files were not found, either manually specify the\n" + "location in " + CONFFILE
+					+ " (By setting the baseDir option) or\n" + "delete " + CONFFILE + " and use the file picker to fix the problem.",
+					"Muls not found", JOptionPane.ERROR_MESSAGE);
 			exitGracefully(1);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-		
+
 		viewerTabs.add("Textures", textureViewer);
 		viewerTabs.add("Multis", multiViewer);
 		viewerTabs.add("Art", artViewer);
@@ -83,52 +78,54 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 		viewerTabs.add("Sounds", soundViewer);
 		viewerTabs.add("Fonts", fontViewer);
 		viewerTabs.addChangeListener(this);
-		
+
 		//shows the status bar
 		stateChanged(null);
-		
+
 		saveConfig();
 	}
-	
-	private void setupMenu(){
+
+	private void setupMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic(KeyEvent.VK_F);
-		
+
 		JMenuItem setDir = new JMenuItem("Set Directory...");
 		setDir.setMnemonic(KeyEvent.VK_D);
-		
+
 		fileMenu.add(setDir);
-		setDir.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
+		setDir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				dirChooser.showOpenDialog(ResourceViewer.this);
 			}
 		});
-		
+
 		fileMenu.addSeparator();
-		
+
 		JMenuItem exitMenuItem = new JMenuItem("Exit");
 		exitMenuItem.setMnemonic(KeyEvent.VK_X);
-		
+
 		fileMenu.add(exitMenuItem);
-		exitMenuItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
+		exitMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				exitGracefully();
 			}
 		});
-		
+
 		mainMenu.add(fileMenu);
 	}
-	
-	private void doConfigure() throws IOException{
+
+	private void doConfigure() throws IOException {
 		try {
 			configuration.load(CONFFILE);
-			dir = new File((String)configuration.get("baseDir"));
+			dir = new File((String) configuration.get("baseDir"));
 		} catch (JSONException e1) {
-			System.out.println("Your "+CONFFILE+" file may be corrupt.");
+			System.out.println("Your " + CONFFILE + " file may be corrupt.");
 			e1.printStackTrace();
-		} catch (FileNotFoundException e){
+		} catch (FileNotFoundException e) {
 			int result = dirChooser.showOpenDialog(ResourceViewer.this);
-			if(result == JFileChooser.CANCEL_OPTION){exitGracefully();}
+			if (result == JFileChooser.CANCEL_OPTION) {
+				exitGracefully();
+			}
 			dir = dirChooser.getSelectedFile();
 			try {
 				configuration.set("baseDir", dir.getAbsoluteFile());
@@ -137,29 +134,24 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 			}
 		}
 	}
-	
-	private void setupViewers() throws FileNotFoundException, IOException{
-		String[] wordFiles = {"speech.mul"};
-		String[] hueFiles = {"hues.mul"};
-		String[] fontFiles = {"fonts.mul"};
-		String[] textureFiles = {"texidx.mul", "texmaps.mul"};
-		String[] skillFiles = {"skills.idx", "skills.mul"};
-		String[] gumpFiles = {"gumpidx.mul", "gumpart.mul"};
-		String[] soundFiles = {"soundidx.mul", "sound.mul"};
-		String[] artFiles = {"artidx.mul", "art.mul"};
-		String[] multiFiles = {"multi.idx", "multi.mul"};
+
+	private void setupViewers() throws FileNotFoundException, IOException {
+		String[] wordFiles = { "speech.mul" };
+		String[] hueFiles = { "hues.mul" };
+		String[] fontFiles = { "fonts.mul" };
+		String[] textureFiles = { "texidx.mul", "texmaps.mul" };
+		String[] skillFiles = { "skills.idx", "skills.mul" };
+		String[] gumpFiles = { "gumpidx.mul", "gumpart.mul" };
+		String[] soundFiles = { "soundidx.mul", "sound.mul" };
+		String[] artFiles = { "artidx.mul", "art.mul" };
+		String[] multiFiles = { "multi.idx", "multi.mul" };
 		//String[] tileDataFiles = {"tiledata.mul" };
-		
+
 		SpriteDataLoader spriteDataLoader = new SpriteDataLoader();
-		spriteDataLoader.prepare(
-			new StandardPreparation<Preparation.None>(
-				new File(dir, "tiledata.mul"),
-				null,
-				null
-			)
-			//new FileInputStream(new File(dir, "tiledata.mul")).getChannel()
-		);
-		
+		spriteDataLoader.prepare(new StandardPreparation<Preparation.None>(new File(dir, "tiledata.mul"), null, null)
+		//new FileInputStream(new File(dir, "tiledata.mul")).getChannel()
+				);
+
 		hueViewer = new HueViewer(dir, hueFiles);
 		speechViewer = new SpeechViewer(dir, wordFiles);
 		fontViewer = new FontViewer(dir, fontFiles);
@@ -170,7 +162,7 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 		artViewer = new ArtViewer(dir, artFiles);
 		multiViewer = new MultiViewer(dir, multiFiles, artViewer.getLoader().getSpriteLoader(), spriteDataLoader);
 	}
-	
+
 	/*
 	private CleanUpThread cleanUp = new CleanUpThread(this);
 	private void clearLoaders(){
@@ -185,49 +177,49 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 		}
 	}
 	*/
-	
-	public void stateChanged(ChangeEvent event){
+
+	public void stateChanged(ChangeEvent event) {
 		Component selected = viewerTabs.getSelectedComponent();
-		
-		if(selected instanceof Viewer){
-			Viewer<?> viewer = (Viewer<?>)selected;
+
+		if (selected instanceof Viewer) {
+			Viewer<?> viewer = (Viewer<?>) selected;
 			statusBar.removeAll();
-			
-			for(JComponent element : viewer.getStatus()){
+
+			for (JComponent element : viewer.getStatus()) {
 				statusBar.add(element);
 			}
-			
+
 			statusBar.setColumnConstraints(viewer.getStatusConstraints());
 			statusBar.repaint();
 		}
 	}
-	
-	private static class Instance implements Runnable{
-		String[] args;
-		
-		public Instance(String[] args){
-			this.args = args;
+
+	private static class Instance implements Runnable {
+		//String[] args; FIXME dead code
+
+		public Instance(String[] args) {
+			//this.args = args;
 		}
-		
-		public void run(){
-			try{
+
+		public void run() {
+			try {
 				new ResourceViewer();
-			}catch(IOException e){
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	private void exitGracefully(){
+
+	private void exitGracefully() {
 		exitGracefully(0);
 	}
-	
-	private void exitGracefully(int errorCode){
+
+	private void exitGracefully(int errorCode) {
 		// TODO exit gracefully :)
 		System.exit(errorCode);
 	}
-	
-	private void saveConfig() throws IOException{
+
+	private void saveConfig() throws IOException {
 		try {
 			configuration.save(CONFFILE);
 		} catch (IllegalArgumentException e1) {
@@ -237,13 +229,13 @@ public class ResourceViewer extends JFrame implements ChangeListener{
 		}
 	}
 
-	public static void main(String[] args) throws IOException{
-		try{
+	public static void main(String[] args) throws IOException {
+		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}catch(Exception e){
-			
+		} catch (Exception e) {
+
 		}
-		
+
 		SwingUtilities.invokeLater(new Instance(args));
 	}
 }

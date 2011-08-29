@@ -1,11 +1,11 @@
 package reuo.resources;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.*;
-import java.text.Annotation;
-import java.util.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import reuo.resources.format.*;
+import reuo.resources.format.DataMetrics;
+import reuo.resources.format.Utilities;
 import reuo.resources.io.Entry;
 
 /**

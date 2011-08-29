@@ -11,47 +11,46 @@ import javax.swing.event.ListSelectionListener;
 
 import reuo.resources.io.Loader;
 
-public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements ListSelectionListener{
+public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements ListSelectionListener {
 	protected String tabName;
 	protected LabeledText hexID = new LabeledText("ID (Hex): ");
 	protected LabeledText decID = new LabeledText("ID :");
-	protected Border statusBorder = BorderFactory
-	.createLineBorder(SystemColor.inactiveCaptionBorder);
+	protected Border statusBorder = BorderFactory.createLineBorder(SystemColor.inactiveCaptionBorder);
 	protected Loader<?> loader;
 	private List<JComponent> status = new ArrayList<JComponent>();
-	
-	public Viewer(int orientation){
+
+	public Viewer(int orientation) {
 		super(orientation);
 	}
-	
-	public Viewer(){
+
+	public Viewer() {
 		super(JSplitPane.HORIZONTAL_SPLIT);
 	}
-	
-	public void setupDefaultStatusBar(){
+
+	public void setupDefaultStatusBar() {
 		addStatusSection(hexID);
 		addStatusSection(decID);
 	}
-	
+
 	public abstract void prepareLoader(File dir, String[] fileNames) throws FileNotFoundException, IOException;
-	
-	public List<JComponent> getStatus(){
+
+	public List<JComponent> getStatus() {
 		return status;
 	}
-	
-	public void updateStatusIDs(int id){
+
+	public void updateStatusIDs(int id) {
 		hexID.setText(String.format("0x%X", id));
 		decID.setText(String.format("%d", id));
 	}
-	
-	public void addStatusSection(JComponent jc){
+
+	public void addStatusSection(JComponent jc) {
 		jc.setBorder(statusBorder);
 		status.add(jc);
 	}
-	
-	public void removeStatusSection(JComponent jc){
+
+	public void removeStatusSection(JComponent jc) {
 		status.remove(jc);
 	}
-	
+
 	public abstract String getStatusConstraints();
 }
