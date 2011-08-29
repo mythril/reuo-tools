@@ -1,0 +1,37 @@
+package reuo.resources;
+
+public class TileProperties{
+	public static final int
+		BACKGROUND		= 0x1,
+		WEAPON			= 0x2,
+		TRANSPARENT		= 0x4,
+		TRANSLUCENT		= 0x8,
+		WALL			= 0x10,
+		DAMAGING		= 0x20,
+		IMPASSABLE		= 0x40,
+		WET				= 0x80,
+		UNKNOWN1		= 0x100,
+		SURFACE			= 0x200,
+		BRIDGE			= 0x400,
+		GENERIC			= 0x800,
+		WINDOW			= 0x1000,
+		NOSHOOT			= 0x2000,
+		ARTICLE_A		= 0x4000,
+		ARTICLE_AN		= 0x8000,
+		INTERNAL		= 0x10000,
+		FOLIAGE			= 0x20000,
+		PARTIAL_HUE		= 0x40000,
+		UNKNOWN_2		= 0x80000,
+		MAP				= 0x100000,
+		CONTAINER		= 0x200000,
+		WEARABLE		= 0x400000,
+		LIGHT_SOURCE	= 0x800000,
+		ANIMATION		= 0x1000000,
+		NO_DIAGONAL		= 0x2000000,
+		UNKNOWN_3		= 0x4000000,
+		ARMOR			= 0x8000000,
+		ROOF			= 0x10000000,
+		DOOR			= 0x20000000,
+		STAIR_BACK		= 0x40000000,
+		STAIR_RIGHT		= 0x80000000;
+}
