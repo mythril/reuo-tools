@@ -12,28 +12,31 @@ import org.json.JSONException;
 import reuo.resources.io.*;
 import reuo.util.Configuration;
 
+
+/** Main tool */
 public class ResourceViewer extends JFrame implements ChangeListener {
 	public final static String APPNAME = "vUO";
 	public final static String CONFFILE = "vUO.json";
 	
-	File dir;
-	Configuration configuration;
-	JTabbedPane viewerTabs;
-	Menu mainMenu = new Menu();
-	FontViewer fontViewer;
-	TextureViewer textureViewer;
-	GumpViewer gumpViewer;
-	SoundViewer soundViewer;
-	SkillViewer skillViewer;
-	ArtViewer artViewer;
-	MultiViewer multiViewer;
-	HueViewer hueViewer;
-	JFileChooser dirChooser = new JFileChooser();
-	StatusBar statusBar;
-	SpeechViewer speechViewer;
+	protected File dir;
+	protected Configuration configuration;
+	protected JTabbedPane viewerTabs;
+	protected Menu mainMenu = new Menu();
+	protected FontViewer fontViewer;
+	protected TextureViewer textureViewer;
+	protected GumpViewer gumpViewer;
+	protected SoundViewer soundViewer;
+	protected SkillViewer skillViewer;
+	protected ArtViewer artViewer;
+	protected MultiViewer multiViewer;
+	protected HueViewer hueViewer;
+	protected JFileChooser dirChooser = new JFileChooser();
+	protected StatusBar statusBar;
+	protected SpeechViewer speechViewer;
 
 	public ResourceViewer() throws IOException {
 		super(APPNAME);
+		
 		dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		dirChooser.setDialogTitle("Select Your UO directory.");
 		configuration = new Configuration();
@@ -43,7 +46,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		//setupMenu();
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(new Dimension(600, 600));
+		setSize(new Dimension(1000, 700));
 		setVisible(true);
 
 		viewerTabs = new JTabbedPane();

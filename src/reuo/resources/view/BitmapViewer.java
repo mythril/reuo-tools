@@ -31,7 +31,7 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 	};
 
 	private class JBitmapList extends JList {
-		Checker checker = new Checker(this, 16);
+		Checker checker = new Checker(this, 64);
 
 		public JBitmapList(ListModel<Object> model, Bitmap prototype) {
 			super(model);
@@ -47,8 +47,9 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 
 		@Override
 		public void paintComponent(final Graphics g) {
-			checker.paint((Graphics2D) g);
-
+			//checker.paint((Graphics2D) g);
+			g.setColor(Color.GRAY);
+			g.fillRect(0, 0, getWidth(), getHeight());
 			super.paintComponent(g);
 		}
 	}
