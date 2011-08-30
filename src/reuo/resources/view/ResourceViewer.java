@@ -15,10 +15,11 @@ import reuo.util.Configuration;
 public class ResourceViewer extends JFrame implements ChangeListener {
 	public final static String APPNAME = "vUO";
 	public final static String CONFFILE = "vUO.json";
+	
 	File dir;
 	Configuration configuration;
 	JTabbedPane viewerTabs;
-	JMenuBar mainMenu = new JMenuBar();
+	Menu mainMenu = new Menu();
 	FontViewer fontViewer;
 	TextureViewer textureViewer;
 	GumpViewer gumpViewer;
@@ -39,7 +40,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 
 		doConfigure();
 
-		setupMenu();
+		//setupMenu();
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(new Dimension(600, 600));
@@ -84,36 +85,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 
 		saveConfig();
 	}
-
-	private void setupMenu() {
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic(KeyEvent.VK_F);
-
-		JMenuItem setDir = new JMenuItem("Set Directory...");
-		setDir.setMnemonic(KeyEvent.VK_D);
-
-		fileMenu.add(setDir);
-		setDir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dirChooser.showOpenDialog(ResourceViewer.this);
-			}
-		});
-
-		fileMenu.addSeparator();
-
-		JMenuItem exitMenuItem = new JMenuItem("Exit");
-		exitMenuItem.setMnemonic(KeyEvent.VK_X);
-
-		fileMenu.add(exitMenuItem);
-		exitMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exitGracefully();
-			}
-		});
-
-		mainMenu.add(fileMenu);
-	}
-
+	
 	private void doConfigure() throws IOException {
 		try {
 			configuration.load(CONFFILE);
@@ -237,5 +209,49 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		}
 
 		SwingUtilities.invokeLater(new Instance(args));
+	}
+	
+	class Menu extends JMenuBar {
+		public Menu() {
+			add(createFileMenu());
+			add(createHelpMenu());
+		}
+		
+		public JMenu createFileMenu() {
+			JMenu fileMenu = new JMenu("File");
+			fileMenu.setMnemonic(KeyEvent.VK_F);
+
+			JMenuItem setDir = new JMenuItem("Set Directory...");
+			setDir.setMnemonic(KeyEvent.VK_D);
+
+			fileMenu.add(setDir);
+			setDir.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dirChooser.showOpenDialog(ResourceViewer.this);
+				}
+			});
+
+			fileMenu.addSeparator();
+
+			JMenuItem exitMenuItem = new JMenuItem("Exit");
+			exitMenuItem.setMnemonic(KeyEvent.VK_X);
+
+			fileMenu.add(exitMenuItem);
+			exitMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					exitGracefully();
+				}
+			});
+			
+			return fileMenu;
+		}
+		
+		public JMenu createHelpMenu() {
+			JMenu helpMenu = new JMenu("Help");
+			
+			helpMenu.add(new JMenuItem("Goto Website"));
+			
+			return helpMenu;
+		}
 	}
 }
