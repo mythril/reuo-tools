@@ -47,8 +47,13 @@ public class TextureViewer extends Viewer<TextureLoader> {
 		splitPane.add(list);
 		splitPane.add(detailsPanel);
 
-		splitPane.setDividerLocation(0.75);
-		splitPane.setResizeWeight(1.0);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				splitPane.setDividerLocation(0.75);
+				splitPane.setResizeWeight(1.0);
+			}
+		});
+
 	}
 
 	@Override
