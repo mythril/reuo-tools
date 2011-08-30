@@ -301,55 +301,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		}
 		
 		private void makeBackBuffer() {
-			int left = Integer.MAX_VALUE;
-			int top = Integer.MAX_VALUE;
-			int bottom = Integer.MIN_VALUE;
-			int right = Integer.MIN_VALUE;
-			
-			for (Map.Entry<Integer, AltitudeIndex> zentry : rows.entrySet()) {
-				int row = zentry.getKey();
-				//SortedMap<Integer, List<Cell>> zindex = zentry.getValue().subMap(multi.getLowest(), top + 1);
-
-				for (List<Cell> cells : zentry.getValue().values()) {
-					for (Cell cell : cells) {
-						int tx, ty;
-						int x, y, z;
-						int w, h;
-						
-						//if (cell.getZ() >= top) {
-						//	continue;
-						//}
-						
-						Bitmap bmp = sprites.get(cell.getSpriteId());
-
-						if (bmp == null) {
-							System.out.printf("null: %d\n", cell.getSpriteId());
-							continue;
-						}
-						
-						w = bmp.getWidth();
-						h = bmp.getHeight();
-						x = cell.getX();
-						y = cell.getY();
-						z = cell.getZ();
-
-						tx = (x - y) * 22 - w / 2;
-						ty = row * 22 - z * 4 - h;
-						
-						left = Math.min(left, tx);
-						right = Math.max(right, tx + w);
-						top = Math.min(top, ty - h);
-						bottom = Math.max(bottom, ty + h);
-						
-						//Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), cx + tx, cy + ty);
-					}
-				}
-			}
-			
-			System.out.printf("%d, %d, %d, %d\n", left, right, top, bottom);
-			System.out.printf("%d x %d\n", 1+(right-left), 1+(bottom-top));
-			
-			backbuffer = createVolatileImage(1+(right-left), 1+(bottom-top));
+			backbuffer = createVolatileImage(multiBounds.getWidth() + 1, multiBounds.getHeight() + 1);
 		}
 		
 		public void paintMulti(Graphics lg) {
