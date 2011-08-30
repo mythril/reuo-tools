@@ -137,7 +137,7 @@ final public class Utilities{
 			colorModel = new ComponentColorModel(
 				ColorSpace.getInstance(ColorSpace.CS_sRGB),
 				true, true,
-				true ? Transparency.BITMASK : Transparency.OPAQUE,
+				Transparency.BITMASK, //true ? Transparency.BITMASK : Transparency.OPAQUE,
 				DataBuffer.TYPE_BYTE
 			);
 			

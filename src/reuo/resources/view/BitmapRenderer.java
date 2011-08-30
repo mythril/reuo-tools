@@ -11,9 +11,9 @@ import reuo.resources.*;
 import reuo.resources.format.Utilities;
 import reuo.util.Rect;
 
-public class BitmapRenderer extends JComponent implements ListCellRenderer, TableCellRenderer{
+public class BitmapRenderer<B extends Bitmap> extends JComponent implements ListCellRenderer<B>, TableCellRenderer{
 	final int alphaBits;
-	Bitmap bmp;
+	B bmp;
 	BufferedImage image;
 	boolean isSelected, isFocused;
 	Color background, foreground;
@@ -49,21 +49,29 @@ public class BitmapRenderer extends JComponent implements ListCellRenderer, Tabl
 	}
 	
 	public Component getListCellRendererComponent(
-		JList list,
-		Object value,
+		JList<? extends B> list,
+		B value,
 		int index,
 		boolean isSelected,
 		boolean isFocused
 	){
 		this.isSelected = isSelected;
 		this.isFocused = isFocused;
-		setBitmap((Bitmap)value);
+		setBitmap(value);
 		setSelectionBackground(list.getSelectionBackground());
 		setSelectionForeground(list.getSelectionForeground());
 		
 		return this;
 	}
 	
+	/*
+	@Override
+	public Component getTableCellRendererComponent(JTable arg0, Object arg1,
+			boolean arg2, boolean arg3, int arg4, int arg5) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	*/
 	public Component getTableCellRendererComponent(
 		JTable table,
 		Object value,
@@ -75,14 +83,14 @@ public class BitmapRenderer extends JComponent implements ListCellRenderer, Tabl
 		this.isSelected = isSelected;
 		this.isFocused = hasFocus;
 		
-		setBitmap((Bitmap)value);
+		setBitmap((B)value);
 		setSelectionBackground(table.getSelectionBackground());
 		setSelectionForeground(table.getSelectionForeground());
 		
 		return this;
 	}
 	
-	public void setBitmap(final Bitmap bmp){
+	public void setBitmap(final B bmp){
 		if(bmp == null){
 			this.bmp = null;
 			this.image = null;
