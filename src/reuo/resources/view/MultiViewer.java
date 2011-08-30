@@ -336,10 +336,10 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 						tx = (x - y) * 22 - w / 2;
 						ty = row * 22 - z * 4 - h;
 						
-						left = Math.min(left, tx - w / 2);
-						right = Math.max(right, tx + w / 2);
-						top = Math.min(top, ty - h / 2);
-						bottom = Math.max(bottom, ty + h / 2);
+						left = Math.min(left, tx);
+						right = Math.max(right, tx + w);
+						top = Math.min(top, ty - h);
+						bottom = Math.max(bottom, ty + h);
 						
 						//Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), cx + tx, cy + ty);
 					}
