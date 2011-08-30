@@ -16,20 +16,21 @@ import reuo.resources.format.Utilities;
 import reuo.resources.io.*;
 import reuo.util.Rect;
 
+/** A {@link Viewer} for viewing {@link Multi} resources. */
 public class MultiViewer extends Viewer<StructureLoader> implements ListSelectionListener, ChangeListener {
-	SpriteDataLoader spriteDataLoader;
-	StructureLoader loader;
-	IndexedLoader<Entry, Bitmap> spriteLoader;
+	protected SpriteDataLoader spriteDataLoader;
+	protected StructureLoader loader;
+	protected IndexedLoader<Entry, Bitmap> spriteLoader;
 	Multi multi;
-	JTable table;
-	AsyncLoaderModel listModel;
-	FieldTableModel tableModel;
-	JScrollPane listScrollPane, multiScrollPane;
-	DrawArea drawArea;
-	JPanel mainPanel;
-	JSplitPane splitPane;
-	JSlider floorSlider;
-	JProgressBar progressBar;// = new JProgressBar();
+	protected JTable table;
+	protected AsyncLoaderModel listModel;
+	protected FieldTableModel tableModel;
+	protected JScrollPane listScrollPane, multiScrollPane;
+	protected DrawArea drawArea;
+	protected JPanel mainPanel;
+	protected JSplitPane splitPane;
+	protected JSlider floorSlider;
+	protected JProgressBar progressBar;// = new JProgressBar();
 
 	public MultiViewer(File dir, String[] fileNames, IndexedLoader<Entry, Bitmap> spriteLoader, SpriteDataLoader spriteDataLoader) throws IOException {
 
@@ -51,10 +52,9 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(multiScrollPane = new JScrollPane(drawArea = new DrawArea()));
 		mainPanel.add(floorSlider, BorderLayout.SOUTH);
-
-		splitPane.setResizeWeight(0.0);
-		splitPane.add(listScrollPane = new JScrollPane(table));
+		
 		splitPane.add(mainPanel);
+		splitPane.add(listScrollPane = new JScrollPane(table));
 
 		progressBar = new JProgressBar();
 		progressBar.setValue(50);
@@ -63,6 +63,13 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		setupDefaultStatusBar();
 
 		add(splitPane);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				splitPane.setDividerLocation(getWidth()-100);
+				splitPane.setResizeWeight(1.0);
+			}
+		});
 	}
 
 	/*
