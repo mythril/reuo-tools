@@ -64,14 +64,8 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		return this;
 	}
 	
-	/*
-	@Override
-	public Component getTableCellRendererComponent(JTable arg0, Object arg1,
-			boolean arg2, boolean arg3, int arg4, int arg5) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	*/
+	
+	@SuppressWarnings("unchecked")
 	public Component getTableCellRendererComponent(
 		JTable table,
 		Object value,
@@ -111,6 +105,7 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		this.checker = checker;
 	}
 	
+	/*
 	private void centerAndFit(
 		Rectangle parent,
 		Rectangle child
@@ -135,6 +130,7 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		child.x = parent.x + Math.round(parent.width * 0.5f - child.width * 0.5f);
 		child.y = parent.y + Math.round(parent.height * 0.5f - child.height * 0.5f);
 	}
+	*/
 	
 	@Override
 	public void paintComponent(Graphics lg){
@@ -196,7 +192,7 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 				bitmap = area;
 			}
 		}
-		
+		/*
 		if(metrics.contains(Metric.STRETCHED)){
 			area = bitmap = bounds;
 		}else if(metrics.contains(Metric.SCALED)){
@@ -204,8 +200,8 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 				bitmap = new Rectangle(area);
 			}
 			
-			centerAndFit(bounds, area);
-			centerAndFit(area, bitmap);
+			//centerAndFit(bounds, area);
+			//centerAndFit(area, bitmap);
 		}
 		
 		if(checker != null){
@@ -215,8 +211,9 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		if(metrics.contains(Metric.SCALED) || metrics.contains(Metric.STRETCHED)){
 			g.drawImage(image, bitmap.x, bitmap.y, bitmap.width, bitmap.height, null);
 		}else{
+		*/
 			g.drawImage(image, bitmap.x, bitmap.y, null);
-		}
+		//}
 		
 		/*
 		if(isCropped){

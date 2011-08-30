@@ -1,20 +1,29 @@
 package reuo.resources.view;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.io.File;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.ListModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
 
 import reuo.resources.Bitmap;
-import reuo.resources.io.*;
+import reuo.resources.io.Entry;
+import reuo.resources.io.IndexedLoader;
 
 public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implements AdjustmentListener, ChangeListener {
 	IndexedLoader<Entry, Bitmap> loader;
 	AsyncLoaderModel model;
 	JBitmapList list;
-	BitmapRenderer renderer;
+	BitmapRenderer<Bitmap> renderer;
 	JScrollPane scrollPane;
 	JSlider prototypeSize;
 
@@ -31,7 +40,6 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 	};
 
 	private class JBitmapList extends JList {
-		Checker checker = new Checker(this, 64);
 
 		public JBitmapList(ListModel<Object> model, Bitmap prototype) {
 			super(model);
@@ -54,7 +62,7 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 		}
 	}
 
-	public BitmapViewer(IndexedLoader<Entry, Bitmap> loader, BitmapRenderer renderer) {
+	public BitmapViewer(IndexedLoader<Entry, Bitmap> loader, BitmapRenderer<Bitmap> renderer) {
 		this.renderer = renderer;
 		this.loader = loader;
 
@@ -84,7 +92,7 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 		setupDefaultStatusBar();
 	}
 
-	public BitmapRenderer getRenderer() {
+	public BitmapRenderer<Bitmap> getRenderer() {
 		return renderer;
 	}
 

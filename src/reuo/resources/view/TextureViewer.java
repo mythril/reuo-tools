@@ -36,7 +36,7 @@ public class TextureViewer extends Viewer<TextureLoader> {
 		Bitmap prototype = new Bitmap(-1, 64, 64, null);
 		model = new AsyncLoaderModel(loader, prototype);
 
-		BitmapRenderer renderer = new BitmapRenderer(0);
+		BitmapRenderer<Bitmap> renderer = new BitmapRenderer<Bitmap>(0);
 		list = new BitmapList(model, renderer, prototype);
 
 		detailsPanel = new JPanel();

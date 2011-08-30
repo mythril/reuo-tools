@@ -1,8 +1,10 @@
 package reuo.resources.view;
 
-import java.awt.event.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 
 import reuo.resources.Bitmap;
 
@@ -10,9 +12,9 @@ public class BitmapList extends JScrollPane implements AdjustmentListener {
 	AsyncLoaderModel model;
 	JList list;
 	Bitmap prototype;
-	BitmapRenderer renderer;
+	BitmapRenderer<Bitmap> renderer;
 
-	public BitmapList(AsyncLoaderModel model, BitmapRenderer renderer, Bitmap prototype) {
+	public BitmapList(AsyncLoaderModel model, BitmapRenderer<Bitmap> renderer, Bitmap prototype) {
 		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.model = model;
 		this.prototype = prototype;

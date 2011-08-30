@@ -14,7 +14,7 @@ import reuo.resources.io.*;
 import reuo.resources.view.BitmapRenderer.Metric;
 
 public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListener, TableModelListener, AdjustmentListener{
-	BitmapRenderer renderer;
+	BitmapRenderer<Bitmap> renderer;
 	GumpLoader loader;
 	JTable table;
 	BufferedImage image = null;
@@ -38,7 +38,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 		
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		
-		renderer = new BitmapRenderer(1);
+		renderer = new BitmapRenderer<Bitmap>(1);
 		renderer.setChecker(new Checker(this, 16));
 		
 		gumpScrollPane = new JScrollPane(renderer);
@@ -62,7 +62,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 		idColumn.setCellRenderer(cellRenderer);
 		
 		TableColumn iconColumn = table.getColumnModel().getColumn(1);
-		iconColumn.setCellRenderer(new BitmapRenderer(1, Metric.SCALED));
+		iconColumn.setCellRenderer(new BitmapRenderer<Bitmap>(1, Metric.SCALED));
 		
 		splitPane.add(listScrollPane = new JScrollPane(table));
 		splitPane.add(gumpScrollPane);
