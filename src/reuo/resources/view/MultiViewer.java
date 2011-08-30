@@ -1,19 +1,48 @@
 package reuo.resources.view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.awt.image.VolatileImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import reuo.resources.*;
+import reuo.resources.Bitmap;
+import reuo.resources.Multi;
 import reuo.resources.Multi.Cell;
+import reuo.resources.SpriteData;
 import reuo.resources.format.Utilities;
-import reuo.resources.io.*;
+import reuo.resources.io.Entry;
+import reuo.resources.io.IndexedLoader;
+import reuo.resources.io.SpriteDataLoader;
+import reuo.resources.io.StructureLoader;
 import reuo.util.Rect;
 
 /** A {@link Viewer} for viewing {@link Multi} resources. */
@@ -31,6 +60,8 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected JSplitPane splitPane;
 	protected JSlider floorSlider;
 	protected JProgressBar progressBar;// = new JProgressBar();
+	protected VolatileImage backbuffer;
+	protected boolean hasMultiChanged;
 
 	public MultiViewer(File dir, String[] fileNames, IndexedLoader<Entry, Bitmap> spriteLoader, SpriteDataLoader spriteDataLoader) throws IOException {
 
@@ -71,149 +102,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			}
 		});
 	}
-
-	/*
-	final public class Floor extends LinkedList<Multi.Cell> implements Comparator<Multi.Cell>{
-		private VolatileImage image = null;
-		private boolean isDirty = false;
-		private Rect bounds;
-		
-		@Override
-		public boolean add(Cell e){
-			isDirty = true;
-			
-			return super.add(e);
-		}
-		
-		public Image getImage(){
-			if(!isDirty && image != null && !image.contentsLost()){
-				return image;
-			}
-			
-			//if(isDirty){
-				Collections.sort(this, this);
-			//}
-				
-			//int cx = multi.getWidth() / 2;
-			//int cy = multi.getHeight() / 2;
-			int x = 0, y = 0;
-			bounds = new Rect(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
-			
-			for(Multi.Cell cell : this){
-				Bitmap bmp = sprites.get(cell.getSpriteId());
-				
-				if(bmp == null){
-					try{
-						bmp = spriteLoader.get(cell.getSpriteId());
-					}catch(IOException e){
-						bmp = null;
-					}
-					
-					sprites.put(cell.getSpriteId(), bmp);
-				}
-				
-				if(bmp != null){
-					x = Math.round((cell.getX() - cell.getY()) * 22.0f) - bmp.getWidth() / 2;
-					y = Math.round((cell.getX() + cell.getY()) * 22.0f - cell.getZ() * 4.0f) - bmp.getHeight();
-					
-					bounds.left = Math.min(bounds.left, x);
-					bounds.right = Math.max(bounds.right, x + bmp.getWidth());
-					bounds.top = Math.min(bounds.top, y);
-					bounds.bottom = Math.max(bounds.bottom, y + bmp.getHeight());
-				}
-			}
-			
-			System.out.println(bounds);
-			
-			image = createVolatileImage(bounds.getWidth(), bounds.getHeight());
-			Graphics2D g = image.createGraphics();
-			
-			for(Multi.Cell cell : this){
-				Bitmap bmp = sprites.get(cell.getSpriteId());
-				
-				if(bmp == null){
-					System.out.printf("null: %d\n", cell.getSpriteId());
-					continue;
-				}
-				
-				x = Math.round((cell.getX() - cell.getY()) * 22.0f) - bmp.getWidth() / 2;
-				y = Math.round((cell.getX() + cell.getY()) * 22.0f - cell.getZ() * 4.0f) - bmp.getHeight();
-				
-				Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), x - bounds.left, y - bounds.top);
-			}
-			
-			isDirty = false;
-			return image;
-		}
-
-		public int compare(Cell a, Cell b){
-			int row, altitude, height;
-			
-			row =  (a.getX() + a.getY()) - (b.getX() + b.getY());
-			altitude = a.getZ() - b.getZ();
-			height = 0;
-			
-			//row = (row + 0x7ff) & 0x1000;
-			//altitude = (altitude + 0x7f) & 0xff;
-			height = (height + 0x7ff) & 0x1000;
-			
-			return (row << 20) | (altitude << 12) | height;
-		}
-	}
-	*/
-	/*
-		private class Daemon extends Thread {
-			private boolean isRunning = true;
-			final private Set<Integer> queue = new HashSet<Integer>();
-
-			public void enque(int id) {
-				synchronized (queue) {
-					if (!queue.contains(id)) {
-						queue.add(id);
-						queue.notifyAll();
-					}
-				}
-			}
-
-			public void run() {
-				while (isRunning) {
-					Bitmap bmp;
-					int id;
-
-					while (isRunning) {
-						synchronized (queue) {
-							if (queue.isEmpty()) {
-								break;
-							}
-
-							id = queue.iterator().next();
-							queue.remove(id);
-						}
-
-						synchronized (sprites) {
-							bmp = sprites.get(id);
-
-							if (bmp == null) {
-								try {
-									bmp = spriteLoader.get(id);
-								} catch (IOException e) {
-									bmp = null;
-								}
-							}
-						}
-					}
-
-					synchronized (queue) {
-						try {
-							queue.wait();
-						} catch (InterruptedException e) {
-							continue;
-						}
-					}
-				}
-			}
-		}
-		*/
+	
 	final private Map<Integer, Bitmap> sprites = new HashMap<Integer, Bitmap>();
 	final private RowIndex rows = new RowIndex();
 
@@ -230,9 +119,18 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		if (this.multi == multi) {
 			return;
 		}
+		
+		if (this.multi != null) {
+			if (backbuffer != null) {
+				backbuffer.flush();
+				backbuffer = null;
+			}
+			
+			this.multi = null;
+		}
 
 		rows.clear();
-
+		hasMultiChanged = true;
 		this.multi = multi;
 		int tallest = 0;
 
@@ -293,8 +191,9 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 
 		floorSlider.setMinimum(multi.getLowest());
 		floorSlider.setMaximum(multi.getHighest() + tallest);
-
+		
 		drawArea.setPreferredSize(multiDimensions = new Dimension(multiBounds.getWidth(), multiBounds.getHeight()));
+		floorSlider.setValue(progressBar.getMaximum());
 	}
 
 	public void valueChanged(ListSelectionEvent event) {
@@ -332,6 +231,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	}
 
 	public void stateChanged(ChangeEvent e) {
+		hasMultiChanged = true;
 		drawArea.repaint();
 	}
 
@@ -382,12 +282,83 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 
 		@Override
 		public void paintComponent(Graphics lg) {
-			Graphics2D g = (Graphics2D) lg;
-
 			if (multi == null) {
 				return;
 			}
+			
+			if (backbuffer == null) {
+				makeBackBuffer();
+			}
+			
+			if (hasMultiChanged || backbuffer.contentsLost()) {
+				paintMulti(backbuffer.getGraphics());
+				hasMultiChanged = false;
+			}
+			
+			lg.drawImage(backbuffer, 0, 0, null);
+		}
+		
+		private void makeBackBuffer() {
+			int left = Integer.MAX_VALUE;
+			int top = Integer.MAX_VALUE;
+			int bottom = Integer.MIN_VALUE;
+			int right = Integer.MIN_VALUE;
+			
+			for (Map.Entry<Integer, AltitudeIndex> zentry : rows.entrySet()) {
+				int row = zentry.getKey();
+				//SortedMap<Integer, List<Cell>> zindex = zentry.getValue().subMap(multi.getLowest(), top + 1);
 
+				for (List<Cell> cells : zentry.getValue().values()) {
+					for (Cell cell : cells) {
+						int tx, ty;
+						int x, y, z;
+						int w, h;
+						
+						//if (cell.getZ() >= top) {
+						//	continue;
+						//}
+						
+						Bitmap bmp = sprites.get(cell.getSpriteId());
+
+						if (bmp == null) {
+							System.out.printf("null: %d\n", cell.getSpriteId());
+							continue;
+						}
+						
+						w = bmp.getWidth();
+						h = bmp.getHeight();
+						x = cell.getX();
+						y = cell.getY();
+						z = cell.getZ();
+
+						tx = (x - y) * 22 - w / 2;
+						ty = row * 22 - z * 4 - h;
+						
+						left = Math.min(left, tx - w / 2);
+						right = Math.max(right, tx + w / 2);
+						top = Math.min(top, ty - h / 2);
+						bottom = Math.max(bottom, ty + h / 2);
+						
+						//Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), cx + tx, cy + ty);
+					}
+				}
+			}
+			
+			System.out.printf("%d, %d, %d, %d\n", left, right, top, bottom);
+			System.out.printf("%d x %d\n", 1+(right-left), 1+(bottom-top));
+			
+			backbuffer = createVolatileImage(1+(right-left), 1+(bottom-top));
+		}
+		
+		public void paintMulti(Graphics lg) {
+			Graphics2D g = (Graphics2D) lg;
+			
+			if (multi == null) {
+				return;
+			}
+			
+			g.clearRect(0, 0, backbuffer.getWidth(), backbuffer.getHeight());
+			
 			int cx = -multiBounds.left;//getWidth() / 2;
 			int cy = -multiBounds.top;//getHeight() / 2;
 			int top = floorSlider.getValue();
