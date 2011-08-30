@@ -194,6 +194,8 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		
 		drawArea.setPreferredSize(multiDimensions = new Dimension(multiBounds.getWidth(), multiBounds.getHeight()));
 		floorSlider.setValue(progressBar.getMaximum());
+		
+		drawArea.repaint();
 	}
 
 	public void valueChanged(ListSelectionEvent event) {
