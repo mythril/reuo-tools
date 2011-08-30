@@ -64,14 +64,8 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		return this;
 	}
 	
-	/*
-	@Override
-	public Component getTableCellRendererComponent(JTable arg0, Object arg1,
-			boolean arg2, boolean arg3, int arg4, int arg5) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	*/
+	
+	@SuppressWarnings("unchecked")
 	public Component getTableCellRendererComponent(
 		JTable table,
 		Object value,
@@ -204,8 +198,8 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 				bitmap = new Rectangle(area);
 			}
 			
-			centerAndFit(bounds, area);
-			centerAndFit(area, bitmap);
+			//centerAndFit(bounds, area);
+			//centerAndFit(area, bitmap);
 		}
 		
 		if(checker != null){

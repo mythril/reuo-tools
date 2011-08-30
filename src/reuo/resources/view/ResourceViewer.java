@@ -42,7 +42,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		setupMenu();
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(new Dimension(600, 600));
+		setSize(new Dimension(1000, 700));
 		setVisible(true);
 
 		viewerTabs = new JTabbedPane();
