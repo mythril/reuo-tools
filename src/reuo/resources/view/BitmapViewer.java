@@ -1,6 +1,7 @@
 package reuo.resources.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -54,7 +55,9 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 
 		@Override
 		public void paintComponent(final Graphics g) {
-
+			//checker.paint((Graphics2D) g);
+			g.setColor(Color.GRAY);
+			g.fillRect(0, 0, getWidth(), getHeight());
 			super.paintComponent(g);
 		}
 	}

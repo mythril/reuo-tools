@@ -11,6 +11,11 @@ import javax.swing.event.ListSelectionListener;
 
 import reuo.resources.io.Loader;
 
+/**
+ * Abstract resource viewer of data from a {@link Loader}
+ * 
+ * @param <T> Loader type
+ */
 public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements ListSelectionListener {
 	protected String tabName;
 	protected LabeledText hexID = new LabeledText("ID (Hex): ");

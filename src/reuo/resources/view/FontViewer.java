@@ -1,13 +1,22 @@
 package reuo.resources.view;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import reuo.resources.Bitmap;
 import reuo.resources.Font;
 import reuo.resources.format.Rgb15To16Masked;
-import reuo.resources.io.*;
+import reuo.resources.io.FontLoader;
+import reuo.resources.io.Preparation;
+import reuo.resources.io.StandardPreparation;
 
 public class FontViewer extends Viewer<FontLoader> implements ListSelectionListener{
 	FontLoader loader;
@@ -28,7 +37,7 @@ public class FontViewer extends Viewer<FontLoader> implements ListSelectionListe
 		loaderModel = new LoaderModel(loader);
 		arrayModel = new ArrayModel(new Object[224]);
 		
-		BitmapRenderer bitMapRenderer = new BitmapRenderer(1);
+		BitmapRenderer<Bitmap> bitMapRenderer = new BitmapRenderer<Bitmap>(1);
 		
 		glyphs = new JList(arrayModel);
 		glyphs.setCellRenderer(bitMapRenderer);
