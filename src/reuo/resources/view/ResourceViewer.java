@@ -93,7 +93,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		}
-
+		
 		viewerTabs.add("Textures", textureViewer);
 		viewerTabs.add("Multis", multiViewer);
 		viewerTabs.add("Art", artViewer);

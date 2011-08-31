@@ -28,7 +28,7 @@ public class TextureViewer extends Viewer<TextureLoader> {
 				Rgb15To16.getFormatter());*/
 
 		setupDefaultStatusBar();
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane = hsplit();//new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 		menu = new JPopupMenu("Texture");
 		menu.add(exportItem = new JMenuItem("Export..."));

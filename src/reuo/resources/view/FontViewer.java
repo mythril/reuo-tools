@@ -62,7 +62,9 @@ public class FontViewer extends Viewer<FontLoader> implements ListSelectionListe
 		JScrollPane scrollPane = new JScrollPane(index);
 		JScrollPane glyphScroll = new JScrollPane(glyphs);
 		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollPane, glyphScroll);
+		splitPane = hsplit();
+		splitPane.add(scrollPane);
+		splitPane.add(glyphScroll);
 		splitPane.setOneTouchExpandable(true);
 		//setOrientation(JSplitPane.VERTICAL_SPLIT);
 		add(splitPane);

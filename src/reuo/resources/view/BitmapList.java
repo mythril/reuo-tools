@@ -3,6 +3,7 @@ package reuo.resources.view;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 
@@ -19,6 +20,8 @@ public class BitmapList extends JScrollPane implements AdjustmentListener {
 		this.model = model;
 		this.prototype = prototype;
 		this.renderer = renderer;
+		
+		setBorder(BorderFactory.createEmptyBorder());
 
 		list = new JList<Bitmap>(model);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);

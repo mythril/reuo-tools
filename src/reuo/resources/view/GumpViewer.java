@@ -36,7 +36,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 		addStatusSection(widthLabel);
 		addStatusSection(heightLabel);
 		
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane = hsplit();//new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		
 		renderer = new BitmapRenderer<Bitmap>(1);
 		renderer.setChecker(new Checker(this, 16));
