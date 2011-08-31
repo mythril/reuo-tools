@@ -129,8 +129,8 @@ public class SoundViewer extends Viewer<SoundLoader> implements DocumentListener
 
 	public void mouseReleased(MouseEvent event) {
 	}
-
-	class SimpleCell extends DefaultTableCellRenderer {
+	
+	static class SimpleCell extends DefaultTableCellRenderer {
 		public SimpleCell() {
 			setHorizontalTextPosition(LEFT);
 		}
