@@ -47,6 +47,8 @@ public class ArtViewer extends Viewer<ArtLoader>{
 			legacyArtViewer = new BitmapViewer(loader.getLegacyArtLoader(), renderer)
 		};
 		
+		tileArtViewer.prototypeSize.setValue(64);
+		
 		for(int i=0; i < subViewers.length; i++){			
 			artTabs.add(names[i], subViewers[i]);
 			artTabs.setTabComponentAt(i, new JRotatedLabel(names[i]));

@@ -15,7 +15,7 @@ public class HueViewer extends Viewer<HueLoader>{
 	HueLoader loader;
 	HueRenderer hueRenderer;
 	HueRenderer selectedHue;
-	LoaderModel model;
+	LoaderModel<Hue> model;
 	
 	public HueViewer(File dir, String[] fileNames) throws FileNotFoundException, IOException{
 		loader = new HueLoader();
@@ -23,7 +23,7 @@ public class HueViewer extends Viewer<HueLoader>{
 
 		//removeStatusSection(decID);
 
-		model = new LoaderModel(loader, loader);
+		model = new LoaderModel<Hue>(loader, loader);
 		table = new JTable(new FieldTableModel(model, Hue.class, "ID:getId","Name:getName", "Hue:this"));
 		hueRenderer = new HueRenderer();
 		table.getColumnModel().getColumn(2).setCellRenderer(hueRenderer);

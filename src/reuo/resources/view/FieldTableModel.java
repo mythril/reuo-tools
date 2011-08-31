@@ -10,13 +10,13 @@ import javax.swing.table.TableModel;
 
 public class FieldTableModel implements TableModel{
 	private static Object[] nothing = new Object[0];
-	ListModel rows;
+	ListModel<?> rows;
 	Object[] columns;
 	Class<?> rowType;
 	String[] titles;
 	List<TableModelListener> listeners = new ArrayList<TableModelListener>();
 	
-	public FieldTableModel(ListModel rows, Class<?> c, String... fieldNames) throws IllegalArgumentException{
+	public FieldTableModel(ListModel<?> rows, Class<?> c, String... fieldNames) throws IllegalArgumentException{
 		this.rows = rows;
 		this.rowType = c;
 		

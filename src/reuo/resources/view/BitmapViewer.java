@@ -21,7 +21,7 @@ import reuo.resources.io.IndexedLoader;
 
 public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implements AdjustmentListener, ChangeListener {
 	IndexedLoader<Entry, Bitmap> loader;
-	AsyncLoaderModel model;
+	AsyncLoaderModel<Bitmap> model;
 	JBitmapList list;
 	BitmapRenderer<Bitmap> renderer;
 	JScrollPane scrollPane;
@@ -39,9 +39,9 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 		}
 	};
 
-	private class JBitmapList extends JList {
+	private class JBitmapList extends JList<Bitmap> {
 
-		public JBitmapList(ListModel<Object> model, Bitmap prototype) {
+		public JBitmapList(ListModel<Bitmap> model, Bitmap prototype) {
 			super(model);
 
 			setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -75,7 +75,7 @@ public class BitmapViewer extends Viewer<IndexedLoader<Entry, Bitmap>> implement
 		prototypeSize.setMajorTickSpacing(16);
 		prototypeSize.addChangeListener(this);
 
-		model = new AsyncLoaderModel(loader, null);
+		model = new AsyncLoaderModel<Bitmap>(loader, null);
 
 		list = new JBitmapList(model, prototype);
 		list.addListSelectionListener(this);

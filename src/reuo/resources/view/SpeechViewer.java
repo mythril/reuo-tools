@@ -10,7 +10,7 @@ import reuo.resources.io.*;
 
 public class SpeechViewer extends Viewer<SpeechLoader> {
 	SpeechLoader loader;
-	AsyncLoaderModel loaderModel;
+	AsyncLoaderModel<Speech> loaderModel;
 	FieldTableModel model;
 	JTable table;
 	JScrollPane scrollPane;
@@ -23,7 +23,7 @@ public class SpeechViewer extends Viewer<SpeechLoader> {
 		setupDefaultStatusBar();
 		addStatusSection(transLabel);
 
-		loaderModel = new AsyncLoaderModel(loader, null);
+		loaderModel = new AsyncLoaderModel<Speech>(loader, null);
 		model = new FieldTableModel(loaderModel, Speech.class, "Id:getId", "Words:this");
 		table = new JTable(model);
 

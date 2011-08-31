@@ -33,7 +33,7 @@ final public class Utilities{
 		return metrics;
 	}
 	
-	final public static void prune(JTable table, AsyncLoaderModel model){
+	final public static void prune(JTable table, AsyncLoaderModel<?> model){
 		int min = 0, max = 0;
 		Rectangle bounds = table.getVisibleRect();
 		

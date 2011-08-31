@@ -23,7 +23,7 @@ public class HueRenderer extends BitmapRenderer<Bitmap> {
 		setPreferredSize(null);
 	}
 
-	public Component getListCellRendererComponent(JList list, Hue value, int index, boolean isSelected, boolean cellHasFocus){
+	public Component getListCellRendererComponent(JList<Bitmap> list, Hue value, int index, boolean isSelected, boolean cellHasFocus){
 		Bitmap hue = Utilities.paletteToBitmap(((Hue) value).getPalette());
 		return super.getListCellRendererComponent(list, hue, index, isSelected, cellHasFocus);
 		//return super.getListCellRendererComponent(list,(Object)hue,index,isSelected,cellHasFocus);

@@ -11,7 +11,7 @@ import reuo.resources.io.*;
 public class SkillViewer extends Viewer<SkillLoader> {
 	JTable table;
 	SkillLoader loader;
-	LoaderModel model;
+	LoaderModel<Skill> model;
 
 	public SkillViewer(File dir, String[] fileNames) throws FileNotFoundException, IOException {
 		loader = new SkillLoader();
@@ -19,7 +19,7 @@ public class SkillViewer extends Viewer<SkillLoader> {
 
 		setupDefaultStatusBar();
 
-		model = new LoaderModel(loader);
+		model = new LoaderModel<Skill>(loader);
 		table = new JTable(new FieldTableModel(model, Skill.class, "Action:isAction", "Name:getName"));
 		table.getSelectionModel().addListSelectionListener(this);
 

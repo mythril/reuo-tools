@@ -19,7 +19,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 	JTable table;
 	BufferedImage image = null;
 	JScrollPane gumpScrollPane, listScrollPane;
-	AsyncLoaderModel model;
+	AsyncLoaderModel<Bitmap> model;
 	JSplitPane splitPane;
 	LabeledText widthLabel = new LabeledText("Width: ");
 	LabeledText heightLabel = new LabeledText("Height: ");
@@ -43,7 +43,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 		
 		gumpScrollPane = new JScrollPane(renderer);
 		
-		model = new AsyncLoaderModel(loader, null);
+		model = new AsyncLoaderModel<Bitmap>(loader, null);
 		
 		table = new JTable(new FieldTableModel(model, Bitmap.class, "Id:getId", "this"));
 		table.setRowHeight(32);

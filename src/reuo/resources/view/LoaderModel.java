@@ -18,7 +18,7 @@ import reuo.resources.io.*;
  * @author Kristopher Ives
  * @see AsyncLoaderModel
  */
-public class LoaderModel implements ListModel<Object> {
+public class LoaderModel<T> implements ListModel<T> {
 	/** The listeners that will be alerted of changes */
 	final protected List<ListDataListener> listeners = new LinkedList<ListDataListener>();
 	/**
@@ -27,7 +27,7 @@ public class LoaderModel implements ListModel<Object> {
 	 */
 	final protected Map<Integer, Integer> valid = new HashMap<Integer, Integer>();
 	/** The underlying loader */
-	final protected Loader<?> loader;
+	final protected Loader<T> loader;
 
 	/**
 	 * Initializes a LoaderModel with the specified underlying loader which will
@@ -38,7 +38,7 @@ public class LoaderModel implements ListModel<Object> {
 	 *            the underlying loader
 	 * @see #LoaderModel(Loader, Iterable)
 	 */
-	public LoaderModel(final IndexedLoader<?, ?> indexedLoader) {
+	public LoaderModel(final IndexedLoader<?, T> indexedLoader) {
 		this(indexedLoader, indexedLoader);
 	}
 
@@ -51,7 +51,7 @@ public class LoaderModel implements ListModel<Object> {
 	 * @param indices
 	 *            the source for valid entry identifiers
 	 */
-	public LoaderModel(final Loader<?> loader, final Iterable<Integer> indices) {
+	public LoaderModel(final Loader<T> loader, final Iterable<Integer> indices) {
 		this.loader = loader;
 
 		for (int i : indices) {
@@ -76,9 +76,9 @@ public class LoaderModel implements ListModel<Object> {
 		}
 	}
 
-	public Object getElementAt(int index) {
+	public T getElementAt(int index) {
 		try {
-			return loader.get(valid.get(index));
+			return (T)loader.get(valid.get(index));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

@@ -5,11 +5,11 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public class ArrayModel implements ListModel {
+public class ArrayModel<T> implements ListModel<T> {
 	protected List<ListDataListener> listeners = new ArrayList<ListDataListener>();
-	protected Object[] array;
+	protected T[] array;
 
-	public ArrayModel(Object[] array) {
+	public ArrayModel(T[] array) {
 		this.array = array;
 	}
 
@@ -19,7 +19,7 @@ public class ArrayModel implements ListModel {
 		}
 	}
 
-	public Object getElementAt(int id) {
+	public T getElementAt(int id) {
 		return array[id];
 	}
 

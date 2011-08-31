@@ -9,18 +9,18 @@ import javax.swing.JScrollPane;
 import reuo.resources.Bitmap;
 
 public class BitmapList extends JScrollPane implements AdjustmentListener {
-	AsyncLoaderModel model;
-	JList list;
+	AsyncLoaderModel<Bitmap> model;
+	JList<Bitmap> list;
 	Bitmap prototype;
 	BitmapRenderer<Bitmap> renderer;
 
-	public BitmapList(AsyncLoaderModel model, BitmapRenderer<Bitmap> renderer, Bitmap prototype) {
+	public BitmapList(AsyncLoaderModel<Bitmap> model, BitmapRenderer<Bitmap> renderer, Bitmap prototype) {
 		super(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		this.model = model;
 		this.prototype = prototype;
 		this.renderer = renderer;
 
-		list = new JList(model);
+		list = new JList<Bitmap>(model);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
 		list.setPrototypeCellValue(prototype);
@@ -32,7 +32,7 @@ public class BitmapList extends JScrollPane implements AdjustmentListener {
 		setViewportView(list);
 	}
 
-	public JList getList() {
+	public JList<Bitmap> getList() {
 		return list;
 	}
 
