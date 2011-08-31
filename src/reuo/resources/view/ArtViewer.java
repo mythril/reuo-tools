@@ -48,6 +48,8 @@ public class ArtViewer extends Viewer<ArtLoader>{
 		};
 		
 		tileArtViewer.prototypeSize.setValue(64);
+		spriteArtViewer.prototypeSize.setValue(96);
+		legacyArtViewer.prototypeSize.setValue(96);
 		
 		for(int i=0; i < subViewers.length; i++){			
 			artTabs.add(names[i], subViewers[i]);
