@@ -52,7 +52,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected IndexedLoader<Entry, Bitmap> spriteLoader;
 	Multi multi;
 	protected JTable table;
-	protected AsyncLoaderModel listModel;
+	protected AsyncLoaderModel<Multi> listModel;
 	protected FieldTableModel tableModel;
 	protected JScrollPane listScrollPane, multiScrollPane;
 	protected DrawArea drawArea;
@@ -75,7 +75,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		loader = new StructureLoader(new FileInputStream(new File(dir, fileNames[0])).getChannel(),
 				new FileInputStream(new File(dir, fileNames[1])).getChannel(), spriteDataLoader);
 
-		listModel = new AsyncLoaderModel(loader, null);
+		listModel = new AsyncLoaderModel<Multi>(loader, null);
 		tableModel = new FieldTableModel(listModel, Multi.class, "Id:getId");
 		table = new JTable(tableModel);
 		table.getSelectionModel().addListSelectionListener(this);

@@ -15,7 +15,7 @@ public class TextureViewer extends Viewer<TextureLoader> {
 	BitmapList list;
 	JPanel detailsPanel;
 	JPopupMenu menu;
-	AsyncLoaderModel model;
+	AsyncLoaderModel<Bitmap> model;
 	JMenuItem exportItem;
 	JSplitPane splitPane;
 
@@ -34,7 +34,7 @@ public class TextureViewer extends Viewer<TextureLoader> {
 		menu.add(exportItem = new JMenuItem("Export..."));
 
 		Bitmap prototype = new Bitmap(-1, 64, 64, null);
-		model = new AsyncLoaderModel(loader, prototype);
+		model = new AsyncLoaderModel<Bitmap>(loader, prototype);
 
 		BitmapRenderer<Bitmap> renderer = new BitmapRenderer<Bitmap>(0);
 		list = new BitmapList(model, renderer, prototype);

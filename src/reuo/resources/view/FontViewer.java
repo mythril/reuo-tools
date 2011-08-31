@@ -20,9 +20,10 @@ import reuo.resources.io.StandardPreparation;
 
 public class FontViewer extends Viewer<FontLoader> implements ListSelectionListener{
 	FontLoader loader;
-	LoaderModel loaderModel;
-	ArrayModel arrayModel;
-	JList index, glyphs;
+	LoaderModel<Font> loaderModel;
+	ArrayModel<Bitmap> arrayModel;
+	JList<Font> index;
+	JList<Bitmap> glyphs;
 	JSplitPane splitPane;
 	LabeledText selectedChar = new LabeledText("Character selected: ");
 	
@@ -34,12 +35,12 @@ public class FontViewer extends Viewer<FontLoader> implements ListSelectionListe
 		
 		addStatusSection(selectedChar);
 		
-		loaderModel = new LoaderModel(loader);
-		arrayModel = new ArrayModel(new Object[224]);
+		loaderModel = new LoaderModel<Font>(loader);
+		arrayModel = new ArrayModel<Bitmap>(new Bitmap[224]);
 		
 		BitmapRenderer<Bitmap> bitMapRenderer = new BitmapRenderer<Bitmap>(1);
 		
-		glyphs = new JList(arrayModel);
+		glyphs = new JList<Bitmap>(arrayModel);
 		glyphs.setCellRenderer(bitMapRenderer);
 		glyphs.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		glyphs.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -51,9 +52,8 @@ public class FontViewer extends Viewer<FontLoader> implements ListSelectionListe
 				selectedChar.setText(String.valueOf(selected));
 			}
 		});
-
-
-		index = new JList(loaderModel);
+		
+		index = new JList<Font>(loaderModel);
 		index.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		index.setLayoutOrientation(JList.VERTICAL);
 		index.setVisibleRowCount(-1);
@@ -70,10 +70,12 @@ public class FontViewer extends Viewer<FontLoader> implements ListSelectionListe
 	
 	public void valueChanged(ListSelectionEvent event){
 		Font font = (Font)index.getSelectedValue();
+		
 		if(font == null){
 			return;
 		}
-		glyphs.setModel(new ArrayModel(font.getGlyphs()));
+		
+		glyphs.setModel(new ArrayModel<Bitmap>(font.getGlyphs()));
 		glyphs.repaint();
 	}
 	

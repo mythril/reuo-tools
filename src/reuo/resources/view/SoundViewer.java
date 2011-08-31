@@ -17,7 +17,7 @@ import reuo.resources.io.*;
 
 public class SoundViewer extends Viewer<SoundLoader> implements DocumentListener, MouseListener, AdjustmentListener {
 	SoundLoader loader;
-	AsyncLoaderModel model;
+	AsyncLoaderModel<Sound> model;
 	JTable table;
 	JTextField filter;
 	Clip clip = null;
@@ -39,7 +39,7 @@ public class SoundViewer extends Viewer<SoundLoader> implements DocumentListener
 
 		//Sound prototype = new Sound(-1);// , "loading...", null);
 		// loaderModel = new AsyncLoaderModel(nameLoader, prototype);
-		model = new AsyncLoaderModel(loader, null);
+		model = new AsyncLoaderModel<Sound>(loader, null);
 
 		table = new JTable(new FieldTableModel(model, Sound.class, "Id:getId", "Filename:getName"));
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

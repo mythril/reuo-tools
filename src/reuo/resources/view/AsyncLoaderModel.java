@@ -23,11 +23,11 @@ import reuo.resources.io.*;
  * hard references of too many loaded resources.
  * @author Kristopher Ives
  */
-public class AsyncLoaderModel extends LoaderModel{
-	final Object prototype;
+public class AsyncLoaderModel<T> extends LoaderModel<T> {
+	final T prototype;
 	final JobThread thread = new JobThread();
 	final JobQueue queue = new JobQueue();
-	final SortedMap<Integer, Object> done = Collections.synchronizedSortedMap(new TreeMap<Integer, Object>());
+	final SortedMap<Integer, T> done = Collections.synchronizedSortedMap(new TreeMap<Integer, T>());
 	
 	/**
 	 * Initializes the asynchronous loader with the provided underlying loader
@@ -37,7 +37,7 @@ public class AsyncLoaderModel extends LoaderModel{
 	 * @param prototype the prototype
 	 * @see #AsyncLoaderModel(Loader, Iterable, Object)
 	 */
-	public AsyncLoaderModel(IndexedLoader<?, ?> indexedLoader, Object prototype){
+	public AsyncLoaderModel(IndexedLoader<?, T> indexedLoader, T prototype){
 		this(indexedLoader, indexedLoader, prototype);
 	}
 	
@@ -49,7 +49,7 @@ public class AsyncLoaderModel extends LoaderModel{
 	 * @param indices the source for valid resource identifiers
 	 * @param prototype the temporary prototype
 	 */
-	public AsyncLoaderModel(Loader<?> loader, Iterable<Integer> indices, Object prototype){
+	public AsyncLoaderModel(Loader<T> loader, Iterable<Integer> indices, T prototype){
 		super(loader, indices);
 		
 		this.prototype = prototype;
@@ -90,9 +90,9 @@ public class AsyncLoaderModel extends LoaderModel{
 	}
 	
 	@Override
-	public Object getElementAt(final int index){
+	public T getElementAt(final int index){
 		// First check the existing done cache
-		Object value = done.get(index);
+		T value = done.get(index);
 		
 		if(value != null){
 			return value;
@@ -230,7 +230,7 @@ public class AsyncLoaderModel extends LoaderModel{
 		}
 		
 		public void run(){
-			Object value;
+			T value;
 			int index, id;
 			
 			while(running){
