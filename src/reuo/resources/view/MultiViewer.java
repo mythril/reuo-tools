@@ -1,51 +1,20 @@
 package reuo.resources.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.image.VolatileImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import reuo.resources.Bitmap;
-import reuo.resources.Multi;
+import reuo.resources.*;
 import reuo.resources.Multi.Cell;
-import reuo.resources.SpriteData;
 import reuo.resources.format.Utilities;
-import reuo.resources.io.Entry;
-import reuo.resources.io.IndexedLoader;
-import reuo.resources.io.SpriteDataLoader;
-import reuo.resources.io.StructureLoader;
+import reuo.resources.io.*;
 import reuo.util.Rect;
 
 /** A {@link Viewer} for viewing {@link Multi} resources. */
@@ -53,7 +22,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected SpriteDataLoader spriteDataLoader;
 	protected StructureLoader loader;
 	protected IndexedLoader<Entry, Bitmap> spriteLoader;
-	Multi multi;
+	protected Multi multi;
 	protected JTable table;
 	protected AsyncLoaderModel<Multi> listModel;
 	protected FieldTableModel tableModel;
@@ -66,7 +35,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected VolatileImage backbuffer;
 	protected Graphics2D backbufferGraphics;
 	protected boolean hasMultiChanged;
-	protected JList layerList;
+	protected JList<Object> layerList;
 
 	public MultiViewer(File dir, String[] fileNames, IndexedLoader<Entry, Bitmap> spriteLoader, SpriteDataLoader spriteDataLoader) throws IOException {
 		this.spriteDataLoader = spriteDataLoader;
@@ -92,7 +61,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		
 		JSplitPane sidePanel = vsplit();
 		sidePanel.add(listScrollPane = scroll(table));
-		sidePanel.add(scroll(layerList = new JList()));
+		sidePanel.add(scroll(layerList = new JList<Object>()));
 		
 		splitPane.add(sidePanel);//
 
@@ -268,7 +237,8 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	private class DrawArea extends JComponent implements MouseListener, MouseMotionListener {
 		Checker checker = new Checker(Color.WHITE, Color.LIGHT_GRAY, 24);
 		int scrollX = 0, scrollY = 0;
-		Dimension d = new Dimension();
+		boolean isPanning = false;
+		int startX = 0, startY = 0;
 		
 		public DrawArea() {
 			addMouseListener(this);
@@ -372,11 +342,11 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		public void mouseMoved(MouseEvent e) {
 			if (isPanning) {
 				int dx, dy;
-				boolean isGrowing;
+				//boolean isGrowing;
 				
 				dx = e.getX() - startX;
 				dy = e.getY() - startY;
-				isGrowing = dx > 0 || dy > 0;
+				//isGrowing = dx > 0 || dy > 0;
 				scrollX += dx;
 				scrollY += dy;
 				
@@ -397,24 +367,11 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		public void mouseDragged(MouseEvent e) {
 			mouseMoved(e);
 		}
-
-		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
 		
-		boolean isPanning = false;
-		int startX = 0, startY = 0;
+		// Unused mouse events
+		public void mouseClicked(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) { }
 		
 		public void mousePressed(MouseEvent e) {
 			switch (e.getButton()) {
