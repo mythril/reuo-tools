@@ -204,6 +204,9 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		drawArea.setPreferredSize(multiDimensions = new Dimension(multiBounds.getWidth(), multiBounds.getHeight()));
 		floorSlider.setValue(progressBar.getMaximum());
 		
+		drawArea.scrollX = multiScrollPane.getWidth()/2 - multiDimensions.width/2;
+		drawArea.scrollY = multiScrollPane.getHeight()/2 - multiDimensions.height/2;
+		
 		drawArea.repaint();
 	}
 
@@ -270,6 +273,23 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		public DrawArea() {
 			addMouseListener(this);
 			addMouseMotionListener(this);
+		}
+		
+		@Override
+		public Dimension getPreferredSize() {
+			int w, h;
+			int parentWidth = multiScrollPane.getWidth();
+			int parentHeight = multiScrollPane.getHeight();
+			
+			w = Math.min(scrollX, parentWidth);
+			h = Math.min(scrollY, parentHeight);
+			
+			if (backbuffer != null) {
+				w += backbuffer.getWidth();
+				h += backbuffer.getHeight();
+			}
+			
+			return new Dimension(w, h);
 		}
 
 		@Override public void paintComponent(Graphics lg) {
@@ -363,12 +383,12 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 				startX = e.getX();
 				startY = e.getY();
 				
-				if (isGrowing && backbuffer != null) {
-					d.width = Math.min(startX, getWidth()) + backbuffer.getWidth();
-					d.height = Math.min(startY, getHeight()) + backbuffer.getHeight();
-					setPreferredSize(d);
-					multiScrollPane.updateUI();
-				}
+				//if (isGrowing && backbuffer != null) {
+					//d.width = Math.min(startX, getWidth()) + backbuffer.getWidth();
+					//d.height = Math.min(startY, getHeight()) + backbuffer.getHeight();
+					//setPreferredSize(d);
+					
+				//}
 				
 				repaint();
 			}
@@ -411,6 +431,10 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			switch (e.getButton()) {
 			case MouseEvent.BUTTON2:
 			case MouseEvent.BUTTON3:
+				if (isPanning) {
+					multiScrollPane.updateUI();
+				}
+				
 				isPanning = false;
 				break;
 			}
