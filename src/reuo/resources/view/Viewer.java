@@ -26,10 +26,12 @@ public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements 
 
 	public Viewer(int orientation) {
 		super(orientation);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	public Viewer() {
 		super(JSplitPane.HORIZONTAL_SPLIT);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	public void setupDefaultStatusBar() {
@@ -58,4 +60,24 @@ public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements 
 	}
 
 	public abstract String getStatusConstraints();
+	
+	public static JScrollPane scroll(JComponent c) {
+		JScrollPane scroll = new JScrollPane(c);
+		scroll.setBorder(BorderFactory.createEmptyBorder());
+		scroll.getVerticalScrollBar().setBlockIncrement(64);
+		scroll.getVerticalScrollBar().setUnitIncrement(32);
+		return scroll;
+	}
+	
+	public static JSplitPane hsplit() {
+		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		split.setBorder(BorderFactory.createEmptyBorder());
+		return split;
+	}
+	
+	public static JSplitPane vsplit() {
+		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		split.setBorder(BorderFactory.createEmptyBorder());
+		return split;
+	}
 }

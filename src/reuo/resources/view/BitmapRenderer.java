@@ -38,6 +38,8 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 	public BitmapRenderer(int alphaBits, EnumSet<Metric> metrics){
 		this.alphaBits = alphaBits;
 		this.metrics = metrics;
+		
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 	
 	public void setSelectionBackground(Color c){

@@ -1,48 +1,20 @@
 package reuo.resources.view;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.image.VolatileImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JSplitPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
-import reuo.resources.Bitmap;
-import reuo.resources.Multi;
+import reuo.resources.*;
 import reuo.resources.Multi.Cell;
-import reuo.resources.SpriteData;
 import reuo.resources.format.Utilities;
-import reuo.resources.io.Entry;
-import reuo.resources.io.IndexedLoader;
-import reuo.resources.io.SpriteDataLoader;
-import reuo.resources.io.StructureLoader;
+import reuo.resources.io.*;
 import reuo.util.Rect;
 
 /** A {@link Viewer} for viewing {@link Multi} resources. */
@@ -50,7 +22,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected SpriteDataLoader spriteDataLoader;
 	protected StructureLoader loader;
 	protected IndexedLoader<Entry, Bitmap> spriteLoader;
-	Multi multi;
+	protected Multi multi;
 	protected JTable table;
 	protected AsyncLoaderModel<Multi> listModel;
 	protected FieldTableModel tableModel;
@@ -61,16 +33,17 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected JSlider floorSlider;
 	protected JProgressBar progressBar;// = new JProgressBar();
 	protected VolatileImage backbuffer;
+	protected Graphics2D backbufferGraphics;
 	protected boolean hasMultiChanged;
+	protected JList<Object> layerList;
 
 	public MultiViewer(File dir, String[] fileNames, IndexedLoader<Entry, Bitmap> spriteLoader, SpriteDataLoader spriteDataLoader) throws IOException {
-
 		this.spriteDataLoader = spriteDataLoader;
 		this.spriteLoader = spriteLoader;
 
 		floorSlider = new JSlider();
 		floorSlider.addChangeListener(this);
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane = hsplit();
 
 		loader = new StructureLoader(new FileInputStream(new File(dir, fileNames[0])).getChannel(),
 				new FileInputStream(new File(dir, fileNames[1])).getChannel(), spriteDataLoader);
@@ -81,11 +54,16 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		table.getSelectionModel().addListSelectionListener(this);
 
 		mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(multiScrollPane = new JScrollPane(drawArea = new DrawArea()));
+		mainPanel.add(multiScrollPane = scroll(drawArea = new DrawArea()));
 		mainPanel.add(floorSlider, BorderLayout.SOUTH);
 		
 		splitPane.add(mainPanel);
-		splitPane.add(listScrollPane = new JScrollPane(table));
+		
+		JSplitPane sidePanel = vsplit();
+		sidePanel.add(listScrollPane = scroll(table));
+		sidePanel.add(scroll(layerList = new JList<Object>()));
+		
+		splitPane.add(sidePanel);//
 
 		progressBar = new JProgressBar();
 		progressBar.setValue(50);
@@ -195,6 +173,9 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		drawArea.setPreferredSize(multiDimensions = new Dimension(multiBounds.getWidth(), multiBounds.getHeight()));
 		floorSlider.setValue(progressBar.getMaximum());
 		
+		drawArea.scrollX = multiScrollPane.getWidth()/2 - multiDimensions.width/2;
+		drawArea.scrollY = multiScrollPane.getHeight()/2 - multiDimensions.height/2;
+		
 		drawArea.repaint();
 	}
 
@@ -253,37 +234,37 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 
 	}
 
-	private class DrawArea extends JComponent implements MouseMotionListener {
-		// int curX, curY;
-
+	private class DrawArea extends JComponent implements MouseListener, MouseMotionListener {
+		Checker checker = new Checker(Color.WHITE, Color.LIGHT_GRAY, 24);
+		int scrollX = 0, scrollY = 0;
+		boolean isPanning = false;
+		int startX = 0, startY = 0;
+		
 		public DrawArea() {
-			//addMouseMotionListener(this);
-
-			//RepaintManager repaintManager = RepaintManager.currentManager(this);
-			//repaintManager.setDoubleBufferingEnabled(false);
-			//setDebugGraphicsOptions(DebugGraphics.FLASH_OPTION);
+			addMouseListener(this);
+			addMouseMotionListener(this);
 		}
-
-		/* FIXME Dead code
 		
-		Point2D.Float min = new Point2D.Float();
-		Point2D.Float max = new Point2D.Float();
-		
-		public Rect screenToWorld(Rectangle screen) {
-			min.x = screen.x;
-			min.y = screen.y;
-			max.x = screen.x + screen.width;
-			max.y = screen.y + screen.height;
-
-			niso.transform(min, min);
-			niso.transform(max, max);
-
-			return new Rect(Math.round(min.y), Math.round(min.x), Math.round(max.y), Math.round(max.x));
-		}
-		*/
-
 		@Override
-		public void paintComponent(Graphics lg) {
+		public Dimension getPreferredSize() {
+			int w, h;
+			int parentWidth = multiScrollPane.getWidth();
+			int parentHeight = multiScrollPane.getHeight();
+			
+			w = Math.min(scrollX, parentWidth);
+			h = Math.min(scrollY, parentHeight);
+			
+			if (backbuffer != null) {
+				w += backbuffer.getWidth();
+				h += backbuffer.getHeight();
+			}
+			
+			return new Dimension(w, h);
+		}
+
+		@Override public void paintComponent(Graphics lg) {
+			Graphics2D g = (Graphics2D)lg;
+			
 			if (multi == null) {
 				return;
 			}
@@ -293,15 +274,21 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			}
 			
 			if (hasMultiChanged || backbuffer.contentsLost()) {
-				paintMulti(backbuffer.getGraphics());
+				paintMulti(backbufferGraphics);
 				hasMultiChanged = false;
 			}
 			
-			lg.drawImage(backbuffer, 0, 0, null);
+			g.setColor(Color.GRAY);
+			g.fill(g.getClipBounds());
+			g.drawImage(backbuffer, scrollX, scrollY, null);
+			
+			g.setColor(Color.BLACK);
+			g.drawRect(scrollX, scrollY, backbuffer.getWidth(), backbuffer.getHeight());
 		}
 		
 		private void makeBackBuffer() {
 			backbuffer = createVolatileImage(multiBounds.getWidth() + 1, multiBounds.getHeight() + 1);
+			backbufferGraphics = (Graphics2D)backbuffer.getGraphics();
 		}
 		
 		public void paintMulti(Graphics lg) {
@@ -311,7 +298,8 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 				return;
 			}
 			
-			g.clearRect(0, 0, backbuffer.getWidth(), backbuffer.getHeight());
+			checker.paint(g, backbuffer.getWidth(), backbuffer.getHeight());
+			//g.clearRect(0, 0, backbuffer.getWidth(), backbuffer.getHeight());
 			
 			int cx = -multiBounds.left;//getWidth() / 2;
 			int cy = -multiBounds.top;//getHeight() / 2;
@@ -349,35 +337,64 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 					}
 				}
 			}
-
-			/*
-			g.setColor(Color.RED);
-			
-			x = Math.round((cur.x - cur.y) * 22 - 44/2);
-			y = Math.round((cur.x + cur.y) * 22 - 44);
-			
-			g.fillRect(x, y, 44, 44);
-			*/
 		}
-
-		Point2D.Float cur = new Point2D.Float();
-
-		public void mouseMoved(MouseEvent event) {
-			int cx = getWidth() / 2;
-			int cy = getHeight() / 2;
-
-			cur.x = event.getX() - (cx - 11);
-			cur.y = event.getY() - (cy - 22);
-
-			niso.transform(cur, cur);
-
-			cur.x = Math.round(cur.x);
-			cur.y = Math.round(cur.y);
-
-			repaint();
+		
+		public void mouseMoved(MouseEvent e) {
+			if (isPanning) {
+				int dx, dy;
+				//boolean isGrowing;
+				
+				dx = e.getX() - startX;
+				dy = e.getY() - startY;
+				//isGrowing = dx > 0 || dy > 0;
+				scrollX += dx;
+				scrollY += dy;
+				
+				startX = e.getX();
+				startY = e.getY();
+				
+				//if (isGrowing && backbuffer != null) {
+					//d.width = Math.min(startX, getWidth()) + backbuffer.getWidth();
+					//d.height = Math.min(startY, getHeight()) + backbuffer.getHeight();
+					//setPreferredSize(d);
+					
+				//}
+				
+				repaint();
+			}
 		}
 
 		public void mouseDragged(MouseEvent e) {
+			mouseMoved(e);
+		}
+		
+		// Unused mouse events
+		public void mouseClicked(MouseEvent e) {}
+		public void mouseEntered(MouseEvent e) {}
+		public void mouseExited(MouseEvent e) { }
+		
+		public void mousePressed(MouseEvent e) {
+			switch (e.getButton()) {
+			case MouseEvent.BUTTON2:
+			case MouseEvent.BUTTON3:
+				isPanning = true;
+				startX = e.getX();
+				startY = e.getY();
+				break;
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			switch (e.getButton()) {
+			case MouseEvent.BUTTON2:
+			case MouseEvent.BUTTON3:
+				if (isPanning) {
+					multiScrollPane.updateUI();
+				}
+				
+				isPanning = false;
+				break;
+			}
 		}
 	}
 

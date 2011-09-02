@@ -103,6 +103,14 @@ final public class Checker{
 		paint(g, g.getClipBounds());
 	}
 	
+	Rectangle rect = new Rectangle();
+	
+	public void paint(Graphics2D g, int width, int height) {
+		rect.width = width;
+		rect.height = height;
+		paint(g, rect);
+	}
+	
 	/**
 	 * Draws a checker pattern to the provided graphics within the
 	 * specified clipping bounds. This will temporarily modify the
@@ -111,14 +119,14 @@ final public class Checker{
 	 * @param bounds the clipping bounds
 	 */
 	public void paint(Graphics2D g, Rectangle bounds){
-		Shape oldClip = g.getClip();
-		boolean needsClipping = bounds != oldClip;
+		//Shape oldClip = g.getClip();
+		//boolean needsClipping = bounds != oldClip;
 		
-		if(needsClipping){
-			Area clip = new Area(oldClip);
-			clip.intersect(new Area(bounds));
-			g.setClip(clip);
-		}
+		//if(needsClipping){
+		//	Area clip = new Area(oldClip);
+		//	clip.intersect(new Area(bounds));
+		//	g.setClip(clip);
+		//}
 		
 		g.setColor(background);
 		g.fill(bounds);
@@ -136,8 +144,8 @@ final public class Checker{
 			}
 		}
 		
-		if(needsClipping){
-			g.setClip(oldClip);
-		}
+		//if(needsClipping){
+		//	g.setClip(oldClip);
+		//}
 	}
 }
