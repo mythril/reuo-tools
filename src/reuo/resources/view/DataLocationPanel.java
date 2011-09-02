@@ -85,7 +85,7 @@ public class DataLocationPanel extends JPanel{
 		add(scrollPane/*bottom*/, BorderLayout.CENTER);
 	}
 
-	public class FileDialogOpener implements ActionListener {
+	public static class FileDialogOpener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			
 		}

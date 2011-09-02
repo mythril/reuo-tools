@@ -1,5 +1,7 @@
 package reuo.resources.view;
 
+
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -82,12 +84,13 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	}
 	
 	final private Map<Integer, Bitmap> sprites = new HashMap<Integer, Bitmap>();
+	final Map<Integer, Rect> spriteSizes = new HashMap<Integer, Rect>();
 	final private RowIndex rows = new RowIndex();
 
-	final private class RowIndex extends TreeMap<Integer, AltitudeIndex> {
+	final private static class RowIndex extends TreeMap<Integer, AltitudeIndex> {
 	}
 
-	final private class AltitudeIndex extends TreeMap<Integer, List<Cell>> {
+	final private static class AltitudeIndex extends TreeMap<Integer, List<Cell>> {
 	}
 
 	Dimension multiDimensions = new Dimension(0, 0);
@@ -117,7 +120,7 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 		for (Multi.Cell cell : multi.getCells()) {
 			SpriteData data;
 			Bitmap bmp;
-
+			
 			bmp = sprites.get(cell.getSpriteId());
 
 			try {
@@ -127,6 +130,14 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 					bmp = spriteLoader.get(cell.getSpriteId());
 					sprites.put(cell.getSpriteId(), bmp);
 				}
+				
+				if (spriteSizes.get(cell.getSpriteId()) == null) {
+					spriteSizes.put(
+							cell.getSpriteId(),
+							new Rect(0, 0, bmp.getHeight(), bmp.getWidth())
+						);
+				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				continue;
@@ -314,9 +325,11 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 						if (cell.getZ() >= top) {
 							continue;
 						}
-						Bitmap bmp = sprites.get(cell.getSpriteId());
+						//
+						
+						Rect rect = spriteSizes.get(cell.getSpriteId());
 
-						if (bmp == null) {
+						if (rect == null) {
 							System.out.printf("null: %d\n", cell.getSpriteId());
 							continue;
 						}
@@ -324,16 +337,34 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 						int tx, ty;
 						int x, y, z;
 						int w, h;
-						w = bmp.getWidth();
-						h = bmp.getHeight();
+						w = rect.getWidth();
+						h = rect.getHeight();
 						x = cell.getX();
 						y = cell.getY();
 						z = cell.getZ();
 
 						tx = (x - y) * 22 - w / 2;
 						ty = row * 22 - z * 4 - h;
-
-						Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), cx + tx, cy + ty);
+						
+						Rectangle clip = getVisibleRect(); // debuggin, works good
+						
+						Rectangle spriteBounds = new Rectangle(
+								cx + tx,
+								cy + ty,
+								rect.getWidth(),
+								rect.getHeight()
+							);
+						
+						System.out.println("Clip:");
+						System.out.println(clip);
+						System.out.println("SpriteBounds:");
+						System.out.println(spriteBounds);
+						
+						if (clip.intersects(spriteBounds)) {
+							Bitmap bmp = sprites.get(cell.getSpriteId());
+							Utilities.paint(g, bmp, Utilities.getImage(bmp, 1), cx + tx, cy + ty);
+						}
+						
 					}
 				}
 			}
