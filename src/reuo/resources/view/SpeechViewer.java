@@ -26,7 +26,10 @@ public class SpeechViewer extends Viewer<SpeechLoader> {
 		loaderModel = new AsyncLoaderModel<Speech>(loader, null);
 		model = new FieldTableModel(loaderModel, Speech.class, "Id:getId", "Words:this");
 		table = new JTable(model);
-
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getColumnModel().getColumn(0).setPreferredWidth(32);
+		table.getColumnModel().getColumn(1).setPreferredWidth(900);
+		
 		// SpeechTreeRenderer renderer = new SpeechTreeRenderer();
 		// table.getColumnModel().getColumn(1).setCellRenderer(renderer);
 

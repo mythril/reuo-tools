@@ -22,6 +22,9 @@ public class SkillViewer extends Viewer<SkillLoader> {
 		model = new LoaderModel<Skill>(loader);
 		table = new JTable(new FieldTableModel(model, Skill.class, "Action:isAction", "Name:getName"));
 		table.getSelectionModel().addListSelectionListener(this);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.getColumnModel().getColumn(0).setPreferredWidth(32);
+		table.getColumnModel().getColumn(1).setPreferredWidth(500);
 
 		add(new JScrollPane(table));
 	}
@@ -39,4 +42,12 @@ public class SkillViewer extends Viewer<SkillLoader> {
 	public String getStatusConstraints() {
 		return "0[fill, 50%]0";
 	}
+	
+	@Override
+	public void restore() {
+		System.out.println("!");
+		table.getColumnModel().getColumn(0).setPreferredWidth(55);
+		table.doLayout();
+	}
+	
 }
