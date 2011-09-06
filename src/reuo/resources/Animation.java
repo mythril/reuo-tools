@@ -1,5 +1,26 @@
 package reuo.resources;
 
+import java.nio.Buffer;
+
+import reuo.util.Rect;
+
+public class Animation {
+	public class Frame extends PalettedBitmap{
+		// Stub for later extension
+		public Frame(int id, int width, int height, Buffer data, Rect insets) {
+			super(id, width, height, data, insets);
+		}
+	}
+	
+	public class Sequences {
+		private Palette pal;
+		
+	}
+}
+
+/*
+package reuo.resources;
+
 import java.nio.*;
 import java.util.*;
 
@@ -59,7 +80,7 @@ public class Animation{
 		PALETTE, FRAMES
 	}
 }
-
+*/
 /*
 public class Animation extends Resource<Animation.Property>{
 	public enum Property implements Resource.Property{
