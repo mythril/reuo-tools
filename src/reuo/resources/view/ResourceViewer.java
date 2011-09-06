@@ -1,35 +1,15 @@
 package reuo.resources.view;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import org.json.JSONException;
 
-import reuo.resources.io.Preparation;
-import reuo.resources.io.SpriteDataLoader;
-import reuo.resources.io.StandardPreparation;
+import reuo.resources.io.*;
 import reuo.tools.AboutDialog;
 import reuo.util.Configuration;
 
@@ -63,7 +43,13 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		dirChooser.setDialogTitle("Select Your UO directory.");
 		configuration = new Configuration();
 
+		ImageIcon appIcon = new ImageIcon("binoculars.png");
+		Image appImage = appIcon != null ? appIcon.getImage() : null;
 		doConfigure();
+		
+		if (appImage != null) {
+			setIconImage(appImage);
+		}
 
 		//setupMenu();
 
@@ -181,11 +167,13 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		if (selected instanceof Viewer) {
 			Viewer<?> viewer = (Viewer<?>) selected;
 			statusBar.removeAll();
-
+			
 			for (JComponent element : viewer.getStatus()) {
 				statusBar.add(element);
 			}
-
+			
+			viewer.restore();
+			
 			statusBar.setColumnConstraints(viewer.getStatusConstraints());
 			statusBar.repaint();
 		}

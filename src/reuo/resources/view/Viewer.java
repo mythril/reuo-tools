@@ -33,6 +33,8 @@ public abstract class Viewer<T extends Loader<?>> extends JSplitPane implements 
 		super(JSplitPane.HORIZONTAL_SPLIT);
 		setBorder(BorderFactory.createEmptyBorder());
 	}
+	
+	public void restore() {}
 
 	public void setupDefaultStatusBar() {
 		addStatusSection(hexID);
