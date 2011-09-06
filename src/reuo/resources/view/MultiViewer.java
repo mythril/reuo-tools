@@ -35,13 +35,18 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	protected VolatileImage backbuffer;
 	protected Graphics2D backbufferGraphics;
 	protected boolean hasMultiChanged;
-	protected JList<Object> layerList;
-
+	protected JList<Integer> layerList;
+	protected final Map<Integer, Bitmap> sprites = new HashMap<Integer, Bitmap>();
+	protected final RowIndex rows = new RowIndex();
+	protected final SortedSet<Integer> zList = new TreeSet<Integer>();
+	protected Dimension multiDimensions = new Dimension(0, 0);
+	protected final Rect multiBounds = new Rect();
+	
 	public MultiViewer(File dir, String[] fileNames, IndexedLoader<Entry, Bitmap> spriteLoader, SpriteDataLoader spriteDataLoader) throws IOException {
 		this.spriteDataLoader = spriteDataLoader;
 		this.spriteLoader = spriteLoader;
 
-		floorSlider = new JSlider();
+		floorSlider = new JSlider(JSlider.VERTICAL);
 		floorSlider.addChangeListener(this);
 		splitPane = hsplit();
 
@@ -55,13 +60,13 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 
 		mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(multiScrollPane = scroll(drawArea = new DrawArea()));
-		mainPanel.add(floorSlider, BorderLayout.SOUTH);
+		mainPanel.add(floorSlider, BorderLayout.WEST);
 		
 		splitPane.add(mainPanel);
 		
 		JSplitPane sidePanel = vsplit();
 		sidePanel.add(listScrollPane = scroll(table));
-		sidePanel.add(scroll(layerList = new JList<Object>()));
+		sidePanel.add(scroll(layerList = new JList<Integer>()));
 		
 		splitPane.add(sidePanel);//
 
@@ -80,23 +85,19 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			}
 		});
 	}
-	
-	final private Map<Integer, Bitmap> sprites = new HashMap<Integer, Bitmap>();
-	final private RowIndex rows = new RowIndex();
 
 	final private class RowIndex extends TreeMap<Integer, AltitudeIndex> {
 	}
 
 	final private class AltitudeIndex extends TreeMap<Integer, List<Cell>> {
 	}
-
-	Dimension multiDimensions = new Dimension(0, 0);
-	Rect multiBounds = new Rect();
-
+	
 	public void setMulti(Multi multi) {
 		if (this.multi == multi) {
 			return;
 		}
+		
+		zList.clear();
 		
 		if (this.multi != null) {
 			if (backbuffer != null) {
@@ -106,20 +107,29 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			
 			this.multi = null;
 		}
-
+		
 		rows.clear();
 		hasMultiChanged = true;
 		this.multi = multi;
 		int tallest = 0;
-
+		int lastZ = 0, z = 0, layerCount = 0;
+		
 		multiBounds.left = multiBounds.right = multiBounds.top = multiBounds.bottom = 0;
 
 		for (Multi.Cell cell : multi.getCells()) {
 			SpriteData data;
 			Bitmap bmp;
-
+			
+			z = cell.getZ();
 			bmp = sprites.get(cell.getSpriteId());
-
+			
+			if (lastZ == z || layerCount == 0) {
+				zList.add(z);
+				layerCount++;
+			}
+			
+			lastZ = z;
+			
 			try {
 				data = spriteDataLoader.get(cell.getSpriteId());
 
@@ -131,12 +141,12 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 				e.printStackTrace();
 				continue;
 			}
-
+			
 			if (data == null || bmp == null) {
 				System.out.printf("%s, %s\n", data, bmp);
 				continue;
 			}
-
+			
 			assert data.height >= 0;
 			tallest = Math.max(tallest, data.height);
 
@@ -166,9 +176,9 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			multiBounds.top = Math.min(multiBounds.top, ty);
 			multiBounds.bottom = Math.max(multiBounds.bottom, ty + bmp.getHeight());
 		}
-
+		
 		floorSlider.setMinimum(multi.getLowest());
-		floorSlider.setMaximum(multi.getHighest() + tallest);
+		floorSlider.setMaximum(multi.getHighest() + tallest+ 1);
 		
 		drawArea.setPreferredSize(multiDimensions = new Dimension(multiBounds.getWidth(), multiBounds.getHeight()));
 		floorSlider.setValue(progressBar.getMaximum());
@@ -212,8 +222,25 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 	public void prepareLoader(File dir, String[] fileNames) throws FileNotFoundException, IOException {
 		loader.prepare(new FileInputStream(new File(dir, fileNames[0])).getChannel(), new FileInputStream(new File(dir, fileNames[1])).getChannel());
 	}
+	
+	int lastDrawnZ = 0;
 
 	public void stateChanged(ChangeEvent e) {
+		int z = floorSlider.getValue();
+		
+		int a = Math.min(lastDrawnZ, z);
+		int b = Math.max(lastDrawnZ, z);
+		
+		//if (lastDrawnZ != z) {
+			if (a == b) {
+				return;
+			}
+			
+			if (zList.subSet(a-1, b+1).isEmpty()) {
+				return;
+			}
+		//}
+		
 		hasMultiChanged = true;
 		drawArea.repaint();
 	}
@@ -284,6 +311,8 @@ public class MultiViewer extends Viewer<StructureLoader> implements ListSelectio
 			
 			g.setColor(Color.BLACK);
 			g.drawRect(scrollX, scrollY, backbuffer.getWidth(), backbuffer.getHeight());
+			
+			lastDrawnZ = floorSlider.getValue();
 		}
 		
 		private void makeBackBuffer() {
