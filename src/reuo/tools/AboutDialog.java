@@ -1,8 +1,6 @@
 package reuo.tools;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.*;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -10,6 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.util.concurrent.BrokenBarrierException;
 
 public class AboutDialog extends JDialog {
 	private JPanel buttonPane;
@@ -69,6 +72,17 @@ public class AboutDialog extends JDialog {
 		getContentPane().add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("reuo.github.com");
+		lblNewLabel_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(URI.create("http://reuo.github.com"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		springLayout.putConstraint(SpringLayout.NORTH, lblNewLabel_1, 7, SpringLayout.SOUTH, lblNewLabel);
 		lblNewLabel_1.setForeground(Color.BLUE);
 		getContentPane().add(lblNewLabel_1);
