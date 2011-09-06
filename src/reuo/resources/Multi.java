@@ -52,7 +52,7 @@ public class Multi implements Loadable {
 	public int getCellCount() {
 		return unsorted != null ? unsorted.length : 0;
 	}
-
+	
 	public int getId() {
 		return id;
 	}
