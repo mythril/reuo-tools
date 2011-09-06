@@ -15,7 +15,7 @@ import reuo.resources.io.Preparation.None;
  * texture data. Each texture has TextureLoader.Entry instance associated with
  * it that describes any meta-information about the texture.
  */
-public class TextureLoader extends StoredIndexedLoader<TextureEntry, Bitmap> implements Preparable<StoredIndexPreparation<Preparation.None>>{
+public class TextureLoader extends StoredIndexedLoader<TextureEntry, Bitmap> {//implements Preparable<StoredIndexPreparation<Preparation.None>>{
 	FileChannel texSource;
 	Formatter formatter;
 	

@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import reuo.resources.Speech;
 import reuo.resources.io.Preparation.None;
 
-public class SpeechLoader extends MemoryIndexedLoader<SpeechEntry, Speech> implements Preparable<StandardPreparation<Preparation.None>>{
+public class SpeechLoader extends MemoryIndexedLoader<SpeechEntry, Speech> {// implements Preparable<StandardPreparation<Preparation.None>>{
 	FileChannel channel;
 	
 	public SpeechLoader(){

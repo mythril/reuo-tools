@@ -9,7 +9,7 @@ import java.util.EnumSet;
 import reuo.resources.Sound;
 import reuo.resources.Sound.Property;
 
-public class SoundLoader extends SimpleIndexedLoader<Sound> implements Preparable<StoredIndexPreparation<Sound.Property>>{
+public class SoundLoader extends SimpleIndexedLoader<Sound> {// implements Preparable<StoredIndexPreparation<Sound.Property>>{
 	FileChannel src;
 	EnumSet<Sound.Property> properties;
 	

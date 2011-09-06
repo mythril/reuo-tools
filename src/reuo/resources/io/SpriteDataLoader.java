@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import reuo.resources.SpriteData;
 import reuo.resources.io.Preparation.None;
 
-public class SpriteDataLoader extends Loader<SpriteData> implements Preparable<StandardPreparation<Preparation.None>>{
+public class SpriteDataLoader extends Loader<SpriteData> {//implements Preparable<StandardPreparation<Preparation.None>>{
 	FileChannel dataSource;
 	int size;
 	

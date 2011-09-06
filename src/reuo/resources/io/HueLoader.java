@@ -9,7 +9,7 @@ import java.util.EnumSet;
 import reuo.resources.Hue;
 import reuo.resources.format.Formatter;
 
-public class HueLoader extends FixedLengthLoader<Hue> implements Iterable<Integer>,Preparable<StandardPreparation<Hue.Property>>{
+public class HueLoader extends FixedLengthLoader<Hue> implements Iterable<Integer> {// ,Preparable<StandardPreparation<Hue.Property>>{
 	FileChannel hueSource;
 	Formatter formatter;
 	EnumSet<Hue.Property> properties;

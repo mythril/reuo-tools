@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import reuo.resources.Skill;
 import reuo.resources.io.Preparation.None;
 
-public class SkillLoader extends SimpleIndexedLoader<Skill> implements Preparable<StoredIndexPreparation<Preparation.None>>{
+public class SkillLoader extends SimpleIndexedLoader<Skill> {// implements Preparable<StoredIndexPreparation<Preparation.None>>{
 	FileChannel skillSource;
 	
 	public SkillLoader(){

@@ -8,7 +8,7 @@ import java.nio.channels.FileChannel.MapMode;
 import reuo.resources.Font;
 import reuo.resources.format.Formatter;
 
-public class FontLoader extends MemoryIndexedLoader<FontEntry, Font> implements Preparable<StandardPreparation<?>>{
+public class FontLoader extends MemoryIndexedLoader<FontEntry, Font> { //implements Preparable<StandardPreparation<?>>{
 	FileChannel fontSource;
 	Formatter formatter;
 	

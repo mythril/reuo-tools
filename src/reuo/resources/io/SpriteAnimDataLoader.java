@@ -5,7 +5,7 @@ import java.io.IOException;
 import reuo.resources.SpriteAnimData;
 import reuo.resources.io.Preparation.None;
 //TODO SpriteAnimDataLoader implement Preparable
-public class SpriteAnimDataLoader extends FixedLengthLoader<SpriteAnimData> implements Preparable<StandardPreparation<Preparation.None>>{
+public class SpriteAnimDataLoader extends FixedLengthLoader<SpriteAnimData> {// implements Preparable<StandardPreparation<Preparation.None>>{
 
 	public void prepare(StandardPreparation<None> prep) throws IOException {
 		// TODO Auto-generated method stub

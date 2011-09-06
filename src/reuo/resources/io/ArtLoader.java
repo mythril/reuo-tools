@@ -12,7 +12,7 @@ import reuo.resources.format.Formatter;
 import reuo.resources.io.Preparation.None;
 import reuo.util.Rect;
 
-public class ArtLoader extends SimpleIndexedLoader<Bitmap> implements Preparable<StoredIndexPreparation<Preparation.None>>{
+public class ArtLoader extends SimpleIndexedLoader<Bitmap> {//implements Preparable<StoredIndexPreparation<Preparation.None>>{
 	FileChannel artSource;
 	TileFormatter tileFormatter;
 	ArtChannel artChannel;

@@ -1,7 +1,6 @@
 package reuo.resources.view;
 
 import java.awt.*;
-import java.awt.geom.Area;
 
 import javax.swing.JComponent;
 

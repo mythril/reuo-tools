@@ -1,18 +1,11 @@
 package reuo.tools;
 
 import java.awt.*;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.BrokenBarrierException;
+
+import javax.swing.*;
 
 public class AboutDialog extends JDialog {
 	private JPanel buttonPane;

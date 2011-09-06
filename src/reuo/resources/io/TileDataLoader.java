@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import reuo.resources.TileData;
 import reuo.resources.io.Preparation.None;
 
-public class TileDataLoader extends Loader<TileData> implements Preparable<StandardPreparation<Preparation.None>>{
+public class TileDataLoader extends Loader<TileData> {//implements Preparable<StandardPreparation<Preparation.None>>{
 	FileChannel dataSource;
 	int size;
 

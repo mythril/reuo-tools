@@ -9,7 +9,7 @@ import reuo.resources.format.Formatter;
 import reuo.resources.io.Preparation.None;
 import reuo.util.Rect;
 
-public class GumpLoader extends StoredIndexedLoader<GumpEntry, Bitmap> implements Preparable<StoredIndexPreparation<Preparation.None>>{
+public class GumpLoader extends StoredIndexedLoader<GumpEntry, Bitmap> {// implements Preparable<StoredIndexPreparation<Preparation.None>>{
 	FileChannel artSource;
 	Formatter formatter;
 	DecodedChannel decoder;
