@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 
 /**
- * A loader that has an index that is backed by a data source. The entries are
+ * A loader that has an index that is backed by a file channel. The entries are
  * softly cached and the underlying data source may be accessed at any time.
  * When <code>prepare</code>d, any previous data source will no longer be
  * access and the entry cache will be cleared.
