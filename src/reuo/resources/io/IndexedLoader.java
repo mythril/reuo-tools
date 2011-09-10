@@ -7,7 +7,7 @@ import java.util.Iterator;
  * {@link Entry entries} that describe the {@link Resource}s.
  * <h3>Entries</h3>
  * Entries describe resources and share the same identifier. This index
- * typically describes the where the resource is, but may include other
+ * typically describes where the resource is, but may include other
  * meta-information. Any entry may be invalid in the index. The identifiers for
  * entries may be sparse because some entries may be invalid. This class
  * implements {@link Iterable} which provides an iterator for valid entry
