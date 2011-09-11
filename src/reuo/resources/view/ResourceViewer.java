@@ -31,6 +31,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 	protected ArtViewer artViewer;
 	protected MultiViewer multiViewer;
 	protected HueViewer hueViewer;
+	protected SimpleAnimViewer simpleAnim;
 	protected JFileChooser dirChooser = new JFileChooser();
 	protected StatusBar statusBar;
 	protected SpeechViewer speechViewer;
@@ -82,6 +83,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		
 		viewerTabs.add("Textures", textureViewer);
 		viewerTabs.add("Multis", multiViewer);
+		viewerTabs.add("Animations (Simple)", simpleAnim);
 		viewerTabs.add("Art", artViewer);
 		viewerTabs.add("Gumps", gumpViewer);
 		viewerTabs.add("Skills", skillViewer);
@@ -128,6 +130,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		String[] soundFiles = { "soundidx.mul", "sound.mul" };
 		String[] artFiles = { "artidx.mul", "art.mul" };
 		String[] multiFiles = { "multi.idx", "multi.mul" };
+		String[] animFiles = { "anim.idx", "anim.mul" };
 		//String[] tileDataFiles = {"tiledata.mul" };
 
 		SpriteDataLoader spriteDataLoader = new SpriteDataLoader();
@@ -144,6 +147,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		soundViewer = new SoundViewer(dir, soundFiles);
 		artViewer = new ArtViewer(dir, artFiles);
 		multiViewer = new MultiViewer(dir, multiFiles, artViewer.getLoader().getSpriteLoader(), spriteDataLoader);
+		simpleAnim = new SimpleAnimViewer(dir, animFiles);
 	}
 
 	/*

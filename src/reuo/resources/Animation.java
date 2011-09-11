@@ -1,223 +1,147 @@
 package reuo.resources;
 
-import java.nio.Buffer;
+import java.nio.*;
+import java.util.ArrayList;
 
+import reuo.resources.format.Formatter;
 import reuo.util.Rect;
 
-public class Animation {
-	public class Frame extends PalettedBitmap{
+public class Animation implements Loadable {
+	public class Frame extends PalettedBitmap {
 		// Stub for later extension
-		public Frame(int id, int width, int height, Buffer data, Rect insets) {
-			super(id, width, height, data, insets);
+		public Frame(int id, int width, int height, Palette pal, Buffer data,
+				Rect insets) {
+			super(id, width, height, pal, data, insets);
 		}
 	}
-	
-	public class Sequences {
-		private Palette pal;
-		
-	}
-}
 
-/*
-package reuo.resources;
+	public final int id;
+	public final Formatter formatter;
 
-import java.nio.*;
-import java.util.*;
-
-
-public class Animation{
-	public static class DataLayout{
-		private final SortedMap<Integer, Integer> frameHeader, none;
-		{
-			frameHeader = new TreeMap<Integer, Integer>();
-			frameHeader.put(0x100, 4);
-			
-			none = new TreeMap<Integer, Integer>();
-		}
-		
-		private final EnumSet<Property> properties;
-		private int[] table = null;
-		
-		public DataLayout(EnumSet<Property> properties){
-			this.properties = properties;
-		}
-		
-		public void prepare(SortedMap<Integer, ByteBuffer> buffers) throws BufferUnderflowException{
-			ByteBuffer headerBuffer, tableBuffer;
-			
-			headerBuffer = buffers.get(0x100);
-			tableBuffer = buffers.get(0x100 + 4);
-			
-			if(headerBuffer != null){
-				table = new int[headerBuffer.getInt()];
-			}
-			
-			if(tableBuffer != null){
-				for(int i=0; i < table.length; i++){
-					table[i] = tableBuffer.getInt();
-				}
-			}
-		}
-		
-		public void reset(){
-			this.table = null;
-		}
-		
-		public boolean needsMore(){
-			return table == null;
-		}
-		
-		public SortedMap<Integer, Integer> requirements(){
-			if(properties.contains(Property.FRAMES)){
-				return frameHeader;
-			}
-			
-			return none;
-		}
-	}
-	
-	public enum Property{
-		PALETTE, FRAMES
-	}
-}
-*/
-/*
-public class Animation extends Resource<Animation.Property>{
-	public enum Property implements Resource.Property{
-		PALETTE(Palette.class),
-		FRAMES(Frame[].class);
-		
-		private final Class<?> type;
-		private Property(Class<?> t){ this.type = t; }
-		public Class<?> getType(){ return type; }
-	}
-	
-	private int id;
-	private Palette palette;
-	private Frame[] frames;
-	
-	public Animation(int id){
+	public Animation(int id, Formatter formatter) {
 		this.id = id;
+		this.formatter = formatter;
 	}
-	
-	public int getId(){
-		return id;
+
+	Palette pal;
+	int frameCount;
+
+	ArrayList<Frame> frames;
+
+	public Frame getFrame(int frame) {
+		return frames.get(frame);
 	}
-	
-	public Frame getFrame(int index) throws IndexOutOfBoundsException{
-		return frames[index];
-	}
-	
-	@Override
-	public boolean has(Property property) throws IllegalArgumentException{
-		switch(property){
-		case PALETTE:	return palette != null;
-		case FRAMES:	return frames != null;
+
+	private static String bin(int out) {
+		StringBuffer repeated = new StringBuffer();
+
+		for (int i = 0; i < (Integer.numberOfLeadingZeros(out)); i++) {
+			repeated.append("0");
 		}
-		
-		throw new IllegalArgumentException();
+
+		return repeated.append(Integer.toBinaryString(out)).toString();
 	}
-	
+
+	private static void binout(int out) {
+		System.out.println(bin(out));
+	}
+
 	@Override
-	public Object get(Property property) throws IllegalArgumentException{
-		if(!has(property)) throw new IllegalStateException();
-		
-		switch(property){
-		case PALETTE:	return palette;
-		case FRAMES:	return frames;
+	public void load(ByteBuffer in) throws BufferUnderflowException {
+		System.out.printf("Starting position in buffer: %1$d\n",
+				(int) in.position());
+		System.out.printf("Starting capacity in buffer: %1$d\n",
+				(int) in.capacity());
+		// System.out.printf("Starting position in buffer: %1$d\n", (int)
+		// in.position());
+
+		in.order(ByteOrder.LITTLE_ENDIAN);
+
+		// Load Palette
+		pal = new Palette(in, 256, formatter);
+		pal.load(in);
+
+		System.out.printf("Position in buffer after Palette load: %1$d\n",
+				(int) in.position());
+
+		// Load frame lookup table
+		int start = in.position();
+		frameCount = (in.getInt() & 0xFFFFFFFF);
+		System.out.printf("frameCount: %1$d\n", (int) frameCount);
+		long[] lookup = new long[frameCount];
+		frames = new ArrayList<Frame>(frameCount);
+
+		for (int x = 0; x < frameCount; x += 1) {
+			lookup[x] = start + (in.getInt() & 0xFFFFFFFF);
 		}
-		
-		throw new IllegalArgumentException();
-	}
-	
-	@Override
-	public void load(Property property, ByteBuffer data) throws IllegalArgumentException{		
-		switch(property){
-		case PALETTE:
-			int oldLimit = data.limit();
-			data.mark();
-			data.limit(data.position() + 256 * 2);
-			palette = new Palette(data.slice().order(ByteOrder.LITTLE_ENDIAN), 256, null);
-			
-			data.reset().limit(oldLimit);
-			break;
-		case FRAMES:
-			int count = data.getInt();
-			data.limit(data.position() + count * 4);
-			ByteBuffer table = data.slice().order(ByteOrder.LITTLE_ENDIAN);
-			frames = new Frame[count];
-			
-			for(int i=0; i < frames.length; i++){
-				data.position(table.getInt());
+
+		System.out.printf("Position in buffer after Frame lookup load: %1$d\n",
+				(int) in.position());
+
+		// Load frame data
+		for (long i : lookup) {
+			System.out.printf("Lookup 'i': %1$d, 0x%1$H\n", (int) i);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			in.position((int) i);
+			int centerX = in.getShort(); // signed
+			System.out.printf("centerX: %1$d\n", (int) centerX);
+			int centerY = in.getShort(); // signed
+			System.out.printf("centerY: %1$d\n", (int) centerY);
+			int width = in.getShort() & 0xFFFF;
+			System.out.printf("width: %1$d\n", (int) width);
+			int height = in.getShort() & 0xFFFF;
+			System.out.printf("height: %1$d\n", (int) height);
+			ByteBuffer palPixels = ByteBuffer.allocate(width * height);
+
+			centerX = centerY = 0;
+
+			long header = Integer.reverse(in.getInt() & 0xFFFFFFFF);
+			System.out.println(header == (int) header);
+
+			// Plot pixels
+			while (header != 0x7FFF7FFF) {
+				System.out.printf("Header: 0x%1$H\n", header);
+				binout((int)header);
+
+				int runLength = (int) (header & 0xFFF);
+				System.out.printf("runLength: %1$d\n", (int) runLength);
+				binout(runLength);
+
+				int runX = (int) (header << 10); // ought to be signed
+				runX = runX & 0x3ff;
+				//runX = ((runX & 0x200) == 0x200) ? ((runX & 0x1FF) | 0x80000000) : runX;
 				
-				frames[i] = new Frame();
-				
+				System.out.printf("runX: %1$d\n", (int) runX);
+				binout(runX);
+
+				int runY = (int) (header >>> 22); // ought to be signed
+				// runY = (runY ^ 0x200) - 0x200;
+				runY = runY & 0x3FF;
+				System.out.printf("runY: %1$d\n", (int) runY);
+				binout(runY);
+
+				int uX = centerX + runX;
+				int uY = centerY + runY;
+
+				// TODO crop the frame and include insets
+				int putPos = (uY * width) + uX;
+
+				palPixels.position(putPos);
+
+				while (runLength != 0) {
+					palPixels.put(in.get());
+					runLength -= 1;
+				}
+				header = in.getInt() & 0xFFFFFFFF;
 			}
-			
-			break;
-		default:
-			throw new IllegalArgumentException();
-		}
-	}
-	
-	@Override
-	public void skip(Property property, ByteBuffer buf) throws IllegalArgumentException{
-		switch(property){
-		case PALETTE:
-			buf.position(buf.position() + 256 * 2);
-			break;
-		case FRAMES:
-			break;
-		default:
-			throw new IllegalArgumentException();
-		}
-	}
-	
-	public static class{//Frame extends Resource<Frame.Property>{
-		public enum Property implements Resource.Property{
-			POSITION(int[].class), IMAGE(ByteBuffer.class);
-			
-			private final Class<?> type;
-			private Property(Class<?> t){ this.type = t; }
-			public Class<?> getType(){ return type; }
-		}
-		
-		private int centerX = Integer.MIN_VALUE, centerY = Integer.MIN_VALUE;
-		private Bitmap image;
-		
-		@Override
-		public Object get(Property property) throws IllegalArgumentException{
-			if(!has(property)) throw new IllegalStateException();
-			
-			switch(property){
-			case POSITION:	return new int[]{ centerX, centerY };
-			case IMAGE:	return image;
-			}
-			
-			throw new IllegalArgumentException();
-		}
-		
-		@Override
-		public boolean has(Property property) throws IllegalArgumentException{
-			switch(property){
-			case POSITION:	return centerX != Integer.MIN_VALUE || centerY != Integer.MIN_VALUE;
-			case IMAGE:	return image != null;
-			}
-			
-			throw new IllegalArgumentException();
-		}
-		
-		@Override
-		public void load(Property property, ByteBuffer data) throws IllegalArgumentException{
-			
-			
-		}
-		@Override
-		public void skip(Property property, ByteBuffer buf) throws IllegalArgumentException{
-			
-			
+
+			frames.add(new Frame((int) 0, width, height, pal, palPixels,
+					(Rect) null));
 		}
 	}
 }
-
-*/

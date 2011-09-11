@@ -1,7 +1,6 @@
 package reuo.resources.view;
 
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
 import javax.swing.*;
@@ -17,7 +16,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 	BitmapRenderer<Bitmap> renderer;
 	GumpLoader loader;
 	JTable table;
-	BufferedImage image = null;
+	//BufferedImage image = null;
 	JScrollPane gumpScrollPane, listScrollPane;
 	AsyncLoaderModel<Bitmap> model;
 	JSplitPane splitPane;
@@ -101,7 +100,7 @@ public class GumpViewer extends Viewer<GumpLoader> implements ListSelectionListe
 		
 		//System.out.println("fired");
 		if(bitMap != null){
-			image = Utilities.getImage(bitMap, 1);
+			//image = Utilities.getImage(bitMap, 1);
 
 			updateStatusIDs(model.getId(table.getSelectedRow()));
 			widthLabel.setText(String.valueOf(bitMap.getImageWidth()));
