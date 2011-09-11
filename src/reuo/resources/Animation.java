@@ -79,7 +79,7 @@ public class Animation implements Loadable {
 				(int) in.position());
 
 		// Load frame data
-		for (long i : lookup) {
+		for (int i : lookup) {
 			System.out.printf("Lookup 'i': %1$d, 0x%1$H\n", (int) i);
 			try {
 				Thread.sleep(100);
@@ -100,30 +100,25 @@ public class Animation implements Loadable {
 
 			centerX = centerY = 0;
 
-			//long header = Integer.reverse(in.getInt() & 0xFFFFFFFF);
-			//long header = Integer.reverseBytes(in.getInt() & 0xFFFFFFFF);
+			//int header = Integer.reverse(in.getInt() & 0xFFFFFFFF);
+			//int header = Integer.reverseBytes(in.getInt() & 0xFFFFFFFF);
 			int header = in.getInt() & 0xFFFFFFFF;
 
 			// Plot pixels
 			while (header != 0x7FFF7FFF) {
-				System.out.printf("Header: 0x%1$H\n", (int)header);
-				binout((int)header);
+				System.out.printf("Header: 0x%1$H\n", header);
+				binout(header);
 				
-				int runLength = (int) (header & 0xFFF);
-				System.out.printf("runLength: %1$d\n", (int) runLength);
+				int runLength = (header & 0xFFF);
+				System.out.printf("runLength: %1$d\n", runLength);
 				binout(runLength);
 
-				int runX = (int) (header >>> 12); // ought to be signed
-				runX = runX & 0x3ff;
-				//runX = ((runX & 0x200) == 0x200) ? ((runX & 0x1FF) | 0x80000000) : runX;
-				
-				System.out.printf("runX: %1$d\n", (int) runX);
+				int runX = (((header >>> 12) & 0x3ff) ^ 0x200) - 0x200; // ought to be signed
+				System.out.printf("runX: %1$d\n",  runX);
 				binout(runX);
 
-				int runY = (int) (header >>> 22); // ought to be signed
-				// runY = (runY ^ 0x200) - 0x200;
-				runY = runY & 0x3FF;
-				System.out.printf("runY: %1$d\n", (int) runY);
+				int runY = (((header >>> 22) & 0x3ff) ^ 0x200) - 0x200;; // ought to be signed
+				System.out.printf("runY: %1$d\n", runY);
 				binout(runY);
 
 				int uX = centerX + runX;
