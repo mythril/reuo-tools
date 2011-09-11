@@ -67,8 +67,8 @@ public class Animation implements Loadable {
 		// Load frame lookup table
 		int start = in.position();
 		frameCount = (in.getInt() & 0xFFFFFFFF);
-		System.out.printf("frameCount: %1$d\n", (int) frameCount);
-		long[] lookup = new long[frameCount];
+		System.out.printf("frameCount: %1$d\n", frameCount);
+		int[] lookup = new int[frameCount];
 		frames = new ArrayList<Frame>(frameCount);
 
 		for (int x = 0; x < frameCount; x += 1) {
@@ -87,32 +87,33 @@ public class Animation implements Loadable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			in.position((int) i);
+			in.position(i);
 			int centerX = in.getShort(); // signed
-			System.out.printf("centerX: %1$d\n", (int) centerX);
+			System.out.printf("centerX: %1$d\n", centerX);
 			int centerY = in.getShort(); // signed
-			System.out.printf("centerY: %1$d\n", (int) centerY);
+			System.out.printf("centerY: %1$d\n", centerY);
 			int width = in.getShort() & 0xFFFF;
-			System.out.printf("width: %1$d\n", (int) width);
+			System.out.printf("width: %1$d\n", width);
 			int height = in.getShort() & 0xFFFF;
-			System.out.printf("height: %1$d\n", (int) height);
+			System.out.printf("height: %1$d\n", height);
 			ByteBuffer palPixels = ByteBuffer.allocate(width * height);
 
 			centerX = centerY = 0;
 
-			long header = Integer.reverse(in.getInt() & 0xFFFFFFFF);
-			System.out.println(header == (int) header);
+			//long header = Integer.reverse(in.getInt() & 0xFFFFFFFF);
+			//long header = Integer.reverseBytes(in.getInt() & 0xFFFFFFFF);
+			int header = in.getInt() & 0xFFFFFFFF;
 
 			// Plot pixels
 			while (header != 0x7FFF7FFF) {
-				System.out.printf("Header: 0x%1$H\n", header);
+				System.out.printf("Header: 0x%1$H\n", (int)header);
 				binout((int)header);
-
+				
 				int runLength = (int) (header & 0xFFF);
 				System.out.printf("runLength: %1$d\n", (int) runLength);
 				binout(runLength);
 
-				int runX = (int) (header << 10); // ought to be signed
+				int runX = (int) (header >>> 12); // ought to be signed
 				runX = runX & 0x3ff;
 				//runX = ((runX & 0x200) == 0x200) ? ((runX & 0x1FF) | 0x80000000) : runX;
 				
