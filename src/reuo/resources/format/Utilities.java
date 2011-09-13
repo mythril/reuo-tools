@@ -59,46 +59,62 @@ final public class Utilities {
 
 	final public static IndexColorModel getICM(Palette pal) {
 		Buffer buf = pal.getData();
-		byte[] pixels = null;
+		int[] pixels = null;
 
 		if (pal == null || buf == null) {
 			return null;
 		}
 
 		if (buf instanceof ByteBuffer) {
-			pixels = ((ByteBuffer) buf).array();
+			pixels = ((ByteBuffer) buf).asIntBuffer().array();
 		} else if (buf instanceof ShortBuffer) {
-			ShortBuffer sb = (ShortBuffer) buf;
-			sb.rewind();
+			pixels = new int[buf.capacity() / 2];
 			
-			ByteBuffer dup = ByteBuffer.allocateDirect(sb.capacity() * 2);
-			dup.clear();
-			
-			while (sb.hasRemaining()) {
-				dup.putShort(sb.get());
+			int index = 0;
+			while (buf.hasRemaining()) {
+				pixels[index] = ((((ShortBuffer) buf).get()) << 16) | (((ShortBuffer) buf).get()); 
+				index += 1;
 			}
 			
-			pixels = dup.array();
+			//pixels = dup.asIntBuffer().array();
 		} else {
 			throw new IllegalArgumentException("ByteBuffer or ShortBuffer expected.");
 		}
 		
-		return new IndexColorModel(16, pixels.length, pixels, 0, true);
+		return new IndexColorModel(16, pixels.length, pixels, 0, true, -1, DataBuffer.TYPE_BYTE);
 	}
 
 	final public static BufferedImage getImage(PalettedBitmap bmp, int alphaBits) {
-		IndexColorModel icm = getICM(bmp.getPalette());
 		BufferedImage image = new BufferedImage(bmp.getWidth(),
-				bmp.getHeight(), BufferedImage.TYPE_BYTE_INDEXED, icm);
-
+				bmp.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		
 		if (bmp == null || bmp.getData() == null) {
 			return null;
 		}
-
-		if (icm == null) {
-			return null;
+		
+		ByteBuffer pixels = (ByteBuffer) bmp.getData();
+		ShortBuffer pal = (ShortBuffer) bmp.getPalette().getData();
+		
+		pixels.rewind();
+		
+		int argb;
+		
+		while (pixels.position() < pixels.capacity() - 1) {
+			int pxIdx = pixels.get() & 0xFF;
+			argb = pal.get(pxIdx) & 0xFFFF;
+			int m = 3;
+			int a = (argb  == (1 << 15)) ? 0 : 255;
+			int r = (int) (((argb >> 10) & 0x1F) << m);
+			int g = (int) (((argb >> 5) & 0x1F) << m);
+			int b = (int) ((argb & 0x1F) << m);
+			
+			int pixel = ((a & 0xFFFF) << 24) | ((r & 0xFFFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF); 
+			
+			int x = (pixels.position() - 1) % bmp.getWidth();
+			int y = pixels.position() / bmp.getWidth();
+			image.setRGB(x, y, pixel);
 		}
-
+		
 		return image;
 	}
 
