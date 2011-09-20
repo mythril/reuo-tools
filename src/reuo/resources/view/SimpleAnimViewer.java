@@ -1,86 +1,110 @@
 package reuo.resources.view;
 
+import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.io.*;
+import java.util.*;
+import java.util.Timer;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
 
-import reuo.resources.Animation;
+import reuo.resources.*;
 import reuo.resources.format.*;
+import reuo.resources.format.Formatter;
 import reuo.resources.io.*;
-import reuo.resources.view.BitmapRenderer.Metric;
 
-public class SimpleAnimViewer extends Viewer<AnimationLoader> implements ListSelectionListener, TableModelListener, AdjustmentListener{
+public class SimpleAnimViewer extends Viewer<AnimationLoader> implements ListSelectionListener, AdjustmentListener{
 	AnimationLoader loader;
 	Formatter formatter = Rgb15To16.getFormatter();
-	BitmapRenderer<Animation.Frame> renderer;
 	AsyncLoaderModel<Animation> model;
-	JScrollPane animListPane, animFocusPane;
+	JScrollPane animListPane;
+	AnimPane animFocusPane = new AnimPane();
 	Animation anim;
-	JTable table;
-	JSplitPane splitPane;
+	JList<Animation> list;
+	//JSplitPane splitPane;
 	
 	public SimpleAnimViewer(File dir, String[] fileNames) throws FileNotFoundException, IOException {
 		loader = new AnimationLoader();
 		prepareLoader(dir, fileNames);
 		
-		splitPane = hsplit();
+		//splitPane = hsplit();
 		
-		renderer = new BitmapRenderer<Animation.Frame>(1);
 		model = new AsyncLoaderModel<Animation>(loader, null);
-		animFocusPane = new JScrollPane(renderer);
+		//animFocusPane = new JScrollPane();
 		//animListPane = new JScrollPane(renderer);
 		
-		table = new JTable(new FieldTableModel(model, Animation.Frame.class, "Id:getId", "this"));
-		table.setRowHeight(64);
-		table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table.getSelectionModel().addListSelectionListener(this);
-		table.getModel().addTableModelListener(this);
-		table.setDoubleBuffered(true);
+		list = new JList<Animation>(model);
 		
-		table.getSelectionModel().addListSelectionListener(this);
-
-		DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
-		cellRenderer.setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
+		list.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.getSelectionModel().addListSelectionListener(this);
 		
-		TableColumn idColumn = table.getColumnModel().getColumn(0);
-		idColumn.setCellRenderer(cellRenderer);
-		
-		TableColumn iconColumn = table.getColumnModel().getColumn(1);
-		iconColumn.setCellRenderer(new BitmapRenderer<Animation.Frame>(1, Metric.SCALED));
-		
-		splitPane.add(animListPane = new JScrollPane(table));
-		splitPane.add(animFocusPane);
+		add(animListPane = new JScrollPane(list));
+		add(animFocusPane);
 		
 		animListPane.getHorizontalScrollBar().addAdjustmentListener(this);
 		animListPane.getVerticalScrollBar().addAdjustmentListener(this);
 		
-		splitPane.setDividerLocation(96);
-		splitPane.setResizeWeight(0.0);
-		add(splitPane);
-	}
-	
-	public int getSelectedId() {
-		return table.getSelectionModel().getMinSelectionIndex();
+		setDividerLocation(96);
+		setResizeWeight(0.0);
+		//add(splitPane);
+		list.setSelectedIndex(0);
+		updateSelection();
 	}
 	
 	public void updateSelection () {
-		try {
-			int animId = getSelectedId();
-			anim = loader.get(animId);
+		//try {
+			//int animId = getSelectedId();
+			//anim = loader.get(animId);
+			anim = list.getSelectedValue();
 			
 			if (anim != null) {
-				updateStatusIDs(model.getId(table.getSelectedRow()));
-				renderer.setBitmap(anim.getFrame(0));
+				updateStatusIDs(Integer.valueOf(anim.toString()));
 				animFocusPane.doLayout();
 				animFocusPane.repaint();
 			}
-		} catch (IOException e) {
-			//TODO something legit
-			e.printStackTrace();
-			return;
+//		} catch (IOException e) {
+//			//TODO something legit
+//			e.printStackTrace();
+//			return;
+//		}
+	}
+	
+	public class AnimPane extends JPanel{
+		int frameIndex = 0;
+		Timer timer;
+		
+		public AnimPane() {
+			timer = new Timer();
+			timer.schedule(new Animator(), 50, 50);
+		}
+		
+		@Override
+		protected void paintComponent(Graphics legacy) {
+			super.paintComponent(legacy);
+			Graphics2D g = (Graphics2D) legacy; 
+			
+			
+			if (anim != null) {
+				frameIndex = (int) ((System.currentTimeMillis() / 100) % anim.getFrames().size());
+				Animation.Frame frame = anim.getFrame(frameIndex);
+				
+				g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+				
+				PalettedBitmap img = (PalettedBitmap) frame;
+				g.drawImage(Utilities.getImage(img, 1), 0, 0, img.getWidth()*2, img.getHeight()*2, null);
+			}
+		}
+		
+		private class Animator extends TimerTask {
+
+			@Override
+			public void run() {
+				repaint();
+			}
+			
 		}
 	}
 	
@@ -108,19 +132,8 @@ public class SimpleAnimViewer extends Viewer<AnimationLoader> implements ListSel
 	}
 
 	@Override
-	public void tableChanged(TableModelEvent event) {
-		int index = table.getSelectionModel().getMinSelectionIndex();
-		
-		if(index < event.getFirstRow() || index > event.getLastRow()){
-			return;
-		}
-		
-		updateSelection();
-	}
-
-	@Override
 	public void adjustmentValueChanged(AdjustmentEvent arg0) {
-		Utilities.prune(table, model);
+		repaint();
 	}
 
 }

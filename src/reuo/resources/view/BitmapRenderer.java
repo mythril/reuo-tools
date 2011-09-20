@@ -56,7 +56,7 @@ public class BitmapRenderer<B extends Bitmap> extends JComponent implements List
 		int index,
 		boolean isSelected,
 		boolean isFocused
-	){
+	) {
 		this.isSelected = isSelected;
 		this.isFocused = isFocused;
 		setBitmap(value);

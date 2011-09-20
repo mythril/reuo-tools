@@ -100,12 +100,6 @@ public class Animation implements Loadable {
 		// Load frame data
 		for (int i : lookup) {
 //			System.out.printf("Lookup 'i': %1$d, 0x%1$H\n", i);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			in.position(i);
 			int centerX = in.getShort(); // signed
 //			System.out.printf("centerX: %1$d\n", centerX);
@@ -116,6 +110,7 @@ public class Animation implements Loadable {
 			int height = in.getShort() & 0xFFFF;
 //			System.out.printf("height: %1$d\n", height);
 			ByteBuffer palPixels = ByteBuffer.allocate(width * height);
+			palPixels.clear();
 
 			// centerX = centerY = 0;
 
@@ -152,7 +147,7 @@ public class Animation implements Loadable {
 				
 				// TODO crop the frame and include insets
 				int putPos = (uY * width) + uX;
-
+				
 				palPixels.position(putPos);
 
 				while (runLength != 0) {
@@ -166,5 +161,10 @@ public class Animation implements Loadable {
 
 			frames.add(new Frame(0, width, height, pal, palPixels, (Rect) null));
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return Integer.toString(this.id);
 	}
 }

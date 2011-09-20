@@ -6,6 +6,7 @@ import reuo.util.Rect;
 
 public class PalettedBitmap extends Bitmap{
 	private Palette pal;
+	private Palette override;
 	
 	public PalettedBitmap(int id, int width, int height, Palette pal, Buffer data, Rect insets) {
 		super(id, width, height, data, insets);
@@ -18,7 +19,14 @@ public class PalettedBitmap extends Bitmap{
 	}
 
 	public Palette getPalette() {
+		if (override != null) {
+			return override;
+		}
 		return pal;
+	}
+	
+	public void setPalette(Palette set) {
+		override = set;
 	}
 	
 }

@@ -83,7 +83,11 @@ final public class Utilities {
 		
 		return new IndexColorModel(16, pixels.length, pixels, 0, true, -1, DataBuffer.TYPE_BYTE);
 	}
-
+	
+	final public static BufferedImage getImage(Animation.Frame bmp, int alphabits) {
+		return Utilities.getImage((PalettedBitmap) bmp, alphabits);
+	}
+	
 	final public static BufferedImage getImage(PalettedBitmap bmp, int alphaBits) {
 		BufferedImage image = new BufferedImage(bmp.getWidth(),
 				bmp.getHeight(), BufferedImage.TYPE_INT_ARGB);
