@@ -270,7 +270,7 @@ public class AsyncLoaderModel<T> extends LoaderModel<T> {
 						lastEvent = new EventDispatcher(index);
 					}
 					
-					yield();
+					JobThread.yield();
 				}
 				
 				if(lastEvent != null && !lastEvent.isDispatched()){

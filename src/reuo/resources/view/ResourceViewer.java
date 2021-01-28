@@ -76,6 +76,7 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 			JOptionPane.showMessageDialog(this, "The .mul files were not found, either manually specify the\n" + "location in " + CONFFILE
 					+ " (By setting the baseDir option) or\n" + "delete " + CONFFILE + " and use the file picker to fix the problem.",
 					"Muls not found", JOptionPane.ERROR_MESSAGE);
+			System.out.println(e2);
 			exitGracefully(1);
 		} catch (IOException e2) {
 			e2.printStackTrace();
@@ -125,8 +126,8 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 		String[] hueFiles = { "hues.mul" };
 		String[] fontFiles = { "fonts.mul" };
 		String[] textureFiles = { "texidx.mul", "texmaps.mul" };
-		String[] skillFiles = { "skills.idx", "skills.mul" };
-		String[] gumpFiles = { "gumpidx.mul", "gumpart.mul" };
+		String[] skillFiles = { "Skills.idx", "skills.mul" };
+		String[] gumpFiles = { "Gumpidx.mul", "Gumpart.mul" };
 		String[] soundFiles = { "soundidx.mul", "sound.mul" };
 		String[] artFiles = { "artidx.mul", "art.mul" };
 		String[] multiFiles = { "multi.idx", "multi.mul" };

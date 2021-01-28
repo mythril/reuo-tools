@@ -1,14 +1,15 @@
 package reuo.resources.io;
 
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
-import javax.imageio.ImageIO;
-
 import reuo.resources.Animation;
-import reuo.resources.format.*;
+import reuo.resources.format.Formatter;
 import reuo.resources.io.Preparation.None;
 
 public class AnimationLoader extends StoredIndexedLoader<Entry, Animation>{

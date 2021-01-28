@@ -1,19 +1,31 @@
 package reuo.resources.view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.io.*;
-import java.util.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import reuo.resources.*;
-import reuo.resources.format.*;
+import reuo.resources.Animation;
+import reuo.resources.PalettedBitmap;
 import reuo.resources.format.Formatter;
-import reuo.resources.io.*;
+import reuo.resources.format.Rgb15To16;
+import reuo.resources.format.Utilities;
+import reuo.resources.io.AnimationLoader;
+import reuo.resources.io.Preparation;
+import reuo.resources.io.StoredIndexPreparation;
 
 public class SimpleAnimViewer extends Viewer<AnimationLoader> implements ListSelectionListener, AdjustmentListener{
 	AnimationLoader loader;
