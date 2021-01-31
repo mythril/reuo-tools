@@ -68,7 +68,6 @@ public class Configuration {
 		JSONObject map = new JSONObject();
 		JSONObject nestedMap = new JSONObject();
 		map.put("nested", nestedMap);
-		map.put("FuckYourCouch", "Nigger");
 		map.put("Cocaine", "isAHelluvaDrug");
 		map.put("CharlieMurphy", "Blackness");
 		nestedMap.put("WhatDidTheFingersSayToTheFace", "Slap");

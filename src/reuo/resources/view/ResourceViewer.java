@@ -1,15 +1,38 @@
 package reuo.resources.view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.json.JSONException;
 
-import reuo.resources.io.*;
+import reuo.resources.io.Preparation;
+import reuo.resources.io.SpriteDataLoader;
+import reuo.resources.io.StandardPreparation;
 import reuo.tools.AboutDialog;
 import reuo.util.Configuration;
 
@@ -39,7 +62,6 @@ public class ResourceViewer extends JFrame implements ChangeListener {
 
 	public ResourceViewer() throws IOException {
 		super(APPNAME);
-		
 		dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		dirChooser.setDialogTitle("Select Your UO directory.");
 		configuration = new Configuration();
